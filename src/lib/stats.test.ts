@@ -9,6 +9,14 @@ describe("forecast scoring rules", () => {
     expect(isSuccess(2)).toBe(true);
     expect(isSuccess(1)).toBe(false);
   });
+  it("zero hits is never a success, more hits always are", () => {
+    expect(isSuccess(0)).toBe(false);
+    expect(isSuccess(3)).toBe(true);
+    expect(isSuccess(5)).toBe(true);
+  });
+  it("no overlap yields zero hits", () => {
+    expect(countHits([1, 2, 3, 4, 5], [10, 20, 30, 40, 50])).toBe(0);
+  });
   it("respects a configured threshold", () => {
     expect(isSuccess(2, 3)).toBe(false);
   });

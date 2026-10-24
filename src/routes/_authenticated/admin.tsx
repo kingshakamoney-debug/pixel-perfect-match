@@ -24,7 +24,7 @@ function Admin() {
   const { user } = useUser();
   const admin = useIsAdmin(user?.id);
   if (admin.isLoading || !user) return null;
-  if (!admin.data) return <p className="text-muted-foreground">You don't have administrator access.</p>;
+  if (!admin.data) return <BootstrapAdmin onDone={() => admin.refetch()} />;
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Admin</h1>
