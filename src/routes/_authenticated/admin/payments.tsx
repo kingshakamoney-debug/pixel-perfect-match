@@ -73,6 +73,9 @@ function PaymentsAdmin() {
   const pending = (requests.data ?? []).filter((r) => r.status === "pending_review");
   const decided = (requests.data ?? []).filter((r) => r.status !== "pending_review");
 
+  if (admin.isLoading) return null;
+  if (!admin.data) return <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Payment review is available to full admins only.</p>;
+
   return (
     <div className="space-y-6">
       <section className="space-y-3">

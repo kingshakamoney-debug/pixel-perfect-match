@@ -91,6 +91,9 @@ function SettingsAdmin() {
     qc.invalidateQueries({ queryKey: ["admin-plans"] });
   }
 
+  if (admin.isLoading) return null;
+  if (!admin.data) return <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Settings are available to full admins only.</p>;
+
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="space-y-4 rounded-xl border bg-card p-5">
