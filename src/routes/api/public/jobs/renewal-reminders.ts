@@ -35,8 +35,10 @@ export const Route = createFileRoute("/api/public/jobs/renewal-reminders")({
         // row with a later expiry, which suppresses reminders for the old one.
         const latest = new Map<string, { id: string; current_period_end: string }>();
         for (const s of subs ?? []) {
+          if (!s.current_period_end) continue;
+          const row = { id: s.id, current_period_end: s.current_period_end };
           const cur = latest.get(s.user_id);
-          if (!cur || s.current_period_end > cur.current_period_end) latest.set(s.user_id, s);
+          if (!cur || row.current_period_end > cur.current_period_end) latest.set(s.user_id, row);
         }
 
         let recorded = 0;
