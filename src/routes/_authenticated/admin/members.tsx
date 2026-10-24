@@ -32,17 +32,17 @@ function MembersAdmin() {
     return <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Only the superadmin can manage members and roles.</p>;
   }
 
-  async function grant(target: string) {
-    const { error } = await supabase.rpc("grant_admin", { _target_user: target });
+  async function grant(target: string, role: "admin" | "subadmin") {
+    const { error } = await supabase.rpc("grant_role", { _target_user: target, _role: role });
     if (error) { toast.error(error.message); return; }
-    toast.success("Admin role granted");
+    toast.success(role === "admin" ? "Admin role granted" : "Sub-admin role granted");
     qc.invalidateQueries({ queryKey: ["members"] });
   }
 
-  async function revoke(target: string) {
-    const { error } = await supabase.rpc("revoke_admin", { _target_user: target });
+  async function revoke(target: string, role: "admin" | "subadmin") {
+    const { error } = await supabase.rpc("revoke_role", { _target_user: target, _role: role });
     if (error) { toast.error(error.message); return; }
-    toast.success("Admin role revoked");
+    toast.success("Role revoked");
     qc.invalidateQueries({ queryKey: ["members"] });
   }
 
@@ -51,13 +51,16 @@ function MembersAdmin() {
       <div>
         <h2 className="font-semibold">Members & roles</h2>
         <p className="text-xs text-muted-foreground">
-          Admins can run daily operations (draws, forecasts, results, payments). Only you, the superadmin, can grant or revoke admin access. Every change is recorded in the audit log.
+          <strong>Admins</strong> run everything: draws, forecasts, results, payments and settings.{" "}
+          <strong>Sub-admins</strong> can only post forecasts and enter results — they cannot touch payments, settings or members.{" "}
+          Only you, the superadmin, can grant or revoke these roles. Every change is recorded in the audit log.
         </p>
       </div>
       <div className="divide-y rounded-lg border">
         {(members.data ?? []).map((m) => {
           const isSuper = m.roles.includes("superadmin");
-          const isAdmin = isSuper || m.roles.includes("admin");
+          const isAdmin = m.roles.includes("admin");
+          const isSub = m.roles.includes("subadmin");
           return (
             <div key={m.user_id} className="flex flex-wrap items-center justify-between gap-3 p-3 text-sm">
               <div>
@@ -65,16 +68,24 @@ function MembersAdmin() {
                 <span className="ml-2 text-xs text-muted-foreground">joined {new Date(m.created_at).toLocaleDateString()}</span>
                 <div className="mt-1 flex gap-1.5">
                   {isSuper && <Badge>Superadmin</Badge>}
-                  {m.roles.includes("admin") && <Badge variant="secondary">Admin</Badge>}
-                  {!isAdmin && <Badge variant="outline">Member</Badge>}
+                  {isAdmin && <Badge variant="secondary">Admin</Badge>}
+                  {isSub && <Badge variant="secondary">Sub-admin</Badge>}
+                  {!isSuper && !isAdmin && !isSub && <Badge variant="outline">Member</Badge>}
                 </div>
               </div>
               {!isSuper && (
-                isAdmin ? (
-                  <Button size="sm" variant="outline" onClick={() => revoke(m.user_id)}>Revoke admin</Button>
-                ) : (
-                  <Button size="sm" variant="outline" onClick={() => grant(m.user_id)}>Make admin</Button>
-                )
+                <div className="flex flex-wrap gap-2">
+                  {isAdmin ? (
+                    <Button size="sm" variant="outline" onClick={() => revoke(m.user_id, "admin")}>Revoke admin</Button>
+                  ) : (
+                    <Button size="sm" variant="outline" onClick={() => grant(m.user_id, "admin")}>Make admin</Button>
+                  )}
+                  {isSub ? (
+                    <Button size="sm" variant="outline" onClick={() => revoke(m.user_id, "subadmin")}>Revoke sub-admin</Button>
+                  ) : (
+                    <Button size="sm" variant="outline" onClick={() => grant(m.user_id, "subadmin")}>Make sub-admin</Button>
+                  )}
+                </div>
               )}
             </div>
           );
