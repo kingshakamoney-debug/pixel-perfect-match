@@ -812,6 +812,10 @@ export type Database = {
         Args: { _forecast_id: string }
         Returns: boolean
       }
+      correct_subscription: {
+        Args: { _new_end: string; _reason: string; _subscription_id: string }
+        Returns: undefined
+      }
       create_forecast_correction: {
         Args: { _forecast_id: string; _reason: string }
         Returns: string
@@ -831,6 +835,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          _action: string
+          _entity_id: string
+          _entity_type: string
+          _reason: string
+        }
+        Returns: undefined
       }
       publish_forecast: { Args: { _forecast_id: string }; Returns: undefined }
       reject_payment: {
