@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Replace sign-up name with a unique user handle; keep email sign-in
+- [x] Replace sign-up name with a unique user handle; keep email sign-in
 
 - [x] Core: accounts, admin draws, Forecast Studio, Results Centre with scoring, public history & performance
 - [ ] Recurring draw schedules with automatic draw generation
