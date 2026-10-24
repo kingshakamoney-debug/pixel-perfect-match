@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsAdmin, useUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 const err = (e: unknown) => toast.error((e as any)?.message ?? String(e));
 
 function SettingsAdmin() {
+  const { user } = useUser();
+  const admin = useIsAdmin(user?.id);
   const qc = useQueryClient();
   const settings = useQuery({
     queryKey: ["payment-settings"],
@@ -87,6 +90,9 @@ function SettingsAdmin() {
     setNewPlan({ name: "", duration_months: "1", price: "", currency: "NGN" });
     qc.invalidateQueries({ queryKey: ["admin-plans"] });
   }
+
+  if (admin.isLoading) return null;
+  if (!admin.data) return <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Settings are available to full admins only.</p>;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">

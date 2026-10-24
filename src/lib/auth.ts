@@ -39,6 +39,18 @@ export function useIsSuperadmin(userId?: string) {
   });
 }
 
+/** True for admin, superadmin and subadmin — the roles allowed to post forecasts and enter results. */
+export function useCanManageContent(userId?: string) {
+  return useQuery({
+    queryKey: ["can-manage-content", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("can_manage_content", { _user_id: userId! });
+      return !!data;
+    },
+  });
+}
+
 export function useEntitlement(userId?: string) {
   return useQuery({
     queryKey: ["entitlement", userId],

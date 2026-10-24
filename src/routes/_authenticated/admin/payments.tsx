@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsAdmin, useUser } from "@/lib/auth";
 import { fmt } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,12 +64,17 @@ async function receiptUrl(path: string) {
 }
 
 function PaymentsAdmin() {
+  const { user } = useUser();
+  const admin = useIsAdmin(user?.id);
   const qc = useQueryClient();
   const requests = useRequests();
   const [reviewing, setReviewing] = useState<Request | null>(null);
   const [rejecting, setRejecting] = useState<Request | null>(null);
   const pending = (requests.data ?? []).filter((r) => r.status === "pending_review");
   const decided = (requests.data ?? []).filter((r) => r.status !== "pending_review");
+
+  if (admin.isLoading) return null;
+  if (!admin.data) return <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Payment review is available to full admins only.</p>;
 
   return (
     <div className="space-y-6">
