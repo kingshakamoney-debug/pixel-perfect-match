@@ -45,6 +45,28 @@ function Admin() {
 }
 
 const err = (e: unknown) => toast.error((e as any)?.message ?? String(e));
+
+/** One-time claim of the first administrator role; hidden once any admin exists. */
+function BootstrapAdmin({ onDone }: { onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  async function claim() {
+    setBusy(true);
+    const { data, error } = await supabase.rpc("bootstrap_admin");
+    setBusy(false);
+    if (error) { err(error); return; }
+    if (data) { toast.success("You are now the administrator"); onDone(); }
+    else toast.error("An administrator already exists. Ask them to grant you access.");
+  }
+  return (
+    <div className="max-w-md space-y-3 rounded-xl border bg-card p-6">
+      <h2 className="font-semibold">No administrator yet</h2>
+      <p className="text-sm text-muted-foreground">
+        This site has no administrator. The first person to claim the role becomes the admin — this can only happen once.
+      </p>
+      <Button disabled={busy} onClick={claim}>Claim administrator role</Button>
+    </div>
+  );
+}
 function useDraws() { return useQuery({ queryKey: ["admin-draws"], queryFn: fetchAdminDraws }); }
 const drawLabel = (d: any) => `${d.game?.provider?.name} · ${d.game?.name} — ${fmt(d.scheduled_at)}`;
 
