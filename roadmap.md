@@ -6,3 +6,4 @@
 - [ ] Paystack monthly membership + webhook (blocked: Paystack keys)
 - [ ] Admin member management (suspend, view trial/verification status)
 - [x] Apply uploaded "Magical Numbers in Motion" image as the site motif
+- [x] Security audit + hardening report (admin bootstrap fix, anon function lockdown)
