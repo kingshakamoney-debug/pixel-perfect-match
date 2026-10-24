@@ -64,6 +64,8 @@ async function receiptUrl(path: string) {
 }
 
 function PaymentsAdmin() {
+  const { user } = useUser();
+  const admin = useIsAdmin(user?.id);
   const qc = useQueryClient();
   const requests = useRequests();
   const [reviewing, setReviewing] = useState<Request | null>(null);

@@ -20,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 const err = (e: unknown) => toast.error((e as any)?.message ?? String(e));
 
 function SettingsAdmin() {
+  const { user } = useUser();
+  const admin = useIsAdmin(user?.id);
   const qc = useQueryClient();
   const settings = useQuery({
     queryKey: ["payment-settings"],
