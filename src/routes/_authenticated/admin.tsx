@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useIsAdmin, useUser } from "@/lib/auth";
+import { useIsAdmin, useIsSuperadmin, useUser } from "@/lib/auth";
 import { BootstrapAdmin } from "@/components/admin/bootstrap";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -10,6 +10,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 function AdminLayout() {
   const { user } = useUser();
   const admin = useIsAdmin(user?.id);
+  const superadmin = useIsSuperadmin(user?.id);
   if (admin.isLoading || !user) return null;
   if (!admin.data) return <BootstrapAdmin onDone={() => admin.refetch()} />;
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors";
@@ -22,6 +23,7 @@ function AdminLayout() {
           <Link to="/admin" activeOptions={{ exact: true }} className={link} activeProps={active}>Operations</Link>
           <Link to="/admin/payments" className={link} activeProps={active}>Payments</Link>
           <Link to="/admin/settings" className={link} activeProps={active}>Settings</Link>
+          {superadmin.data && <Link to="/admin/members" className={link} activeProps={active}>Members</Link>}
         </nav>
       </div>
       <Outlet />
