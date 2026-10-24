@@ -78,6 +78,13 @@
       "when": 1792836814088,
       "tag": "0010_unique_user_handles",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792836988397,
+      "tag": "0011_audit_optional_entity",
+      "breakpoints": true
     }
   ]
 }

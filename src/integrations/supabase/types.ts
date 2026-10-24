@@ -859,9 +859,9 @@ export type Database = {
       log_admin_action: {
         Args: {
           _action: string
-          _entity_id: string
+          _entity_id?: string
           _entity_type: string
-          _reason: string
+          _reason?: string
         }
         Returns: undefined
       }
