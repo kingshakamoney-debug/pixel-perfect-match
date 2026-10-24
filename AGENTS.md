@@ -11,6 +11,8 @@
 
 # Project rules
 
+- Account handles are normalized, unique and immutable in Postgres; signup sends handle metadata and email remains the credential. Legacy/social accounts get generated handles to preserve existing sign-in and avoid deriving handles from private emails. Why: referral attribution needs a stable identity and browser-only uniqueness checks can race.
+
 - Business rules (forecast publishing, cutoffs, result verification, scoring, entitlement) live in Postgres security-definer RPCs and RLS; the UI only calls them. Why: browser checks are bypassable.
 - Premium forecast numbers are hidden by RLS (`can_view_forecast_numbers`) until the draw's result is verified or the viewer is entitled. Why: never leak future forecasts.
 - Published forecasts and verified results are never edited in place; corrections create a new version and supersede the old one with an audit log. Why: auditable history.
