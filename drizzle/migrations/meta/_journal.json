@@ -36,6 +36,13 @@
       "when": 1792833002764,
       "tag": "0004_admin_payment_audit_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792833849487,
+      "tag": "0005_add_superadmin_enum_value",
+      "breakpoints": true
     }
   ]
 }
