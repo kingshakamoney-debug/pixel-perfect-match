@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DrawLens — Verified lotto forecast performance" },
+      { title: "LottoWizard — Verified lotto forecast performance" },
       { name: "description", content: "Published lotto forecasts scored against verified official results." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
