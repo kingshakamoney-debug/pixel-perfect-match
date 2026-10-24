@@ -4,7 +4,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsAdmin, useUser } from "@/lib/auth";
 import { fetchGames, fmt } from "@/lib/data";
 import { fetchAdminDraws, insertCombos, parseNumbers, validateCombo } from "@/components/admin/helpers";
 import { Balls } from "@/components/site-header";
@@ -16,57 +15,29 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
-  head: () => ({ meta: [{ title: "Admin — LottoWizard" }, { name: "description", content: "Manage draws, forecasts and results." }] }),
+  head: () => ({ meta: [{ title: "Admin operations — LottoWizard" }, { name: "description", content: "Manage draws, forecasts and results." }] }),
   component: Admin,
 });
 
 function Admin() {
-  const { user } = useUser();
-  const admin = useIsAdmin(user?.id);
-  if (admin.isLoading || !user) return null;
-  if (!admin.data) return <BootstrapAdmin onDone={() => admin.refetch()} />;
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Admin</h1>
-      <Tabs defaultValue="draws">
-        <TabsList>
-          <TabsTrigger value="draws">Draws</TabsTrigger>
-          <TabsTrigger value="studio">Forecast Studio</TabsTrigger>
-          <TabsTrigger value="results">Results Centre</TabsTrigger>
-          <TabsTrigger value="audit">Audit log</TabsTrigger>
-        </TabsList>
-        <TabsContent value="draws"><DrawsTab /></TabsContent>
-        <TabsContent value="studio"><StudioTab /></TabsContent>
-        <TabsContent value="results"><ResultsTab /></TabsContent>
-        <TabsContent value="audit"><AuditTab /></TabsContent>
-      </Tabs>
-    </div>
+    <Tabs defaultValue="draws">
+      <TabsList>
+        <TabsTrigger value="draws">Draws</TabsTrigger>
+        <TabsTrigger value="studio">Forecast Studio</TabsTrigger>
+        <TabsTrigger value="results">Results Centre</TabsTrigger>
+        <TabsTrigger value="audit">Audit log</TabsTrigger>
+      </TabsList>
+      <TabsContent value="draws"><DrawsTab /></TabsContent>
+      <TabsContent value="studio"><StudioTab /></TabsContent>
+      <TabsContent value="results"><ResultsTab /></TabsContent>
+      <TabsContent value="audit"><AuditTab /></TabsContent>
+    </Tabs>
   );
 }
 
 const err = (e: unknown) => toast.error((e as any)?.message ?? String(e));
 
-/** One-time claim of the first administrator role; hidden once any admin exists. */
-function BootstrapAdmin({ onDone }: { onDone: () => void }) {
-  const [busy, setBusy] = useState(false);
-  async function claim() {
-    setBusy(true);
-    const { data, error } = await supabase.rpc("bootstrap_admin");
-    setBusy(false);
-    if (error) { err(error); return; }
-    if (data) { toast.success("You are now the administrator"); onDone(); }
-    else toast.error("An administrator already exists. Ask them to grant you access.");
-  }
-  return (
-    <div className="max-w-md space-y-3 rounded-xl border bg-card p-6">
-      <h2 className="font-semibold">No administrator yet</h2>
-      <p className="text-sm text-muted-foreground">
-        This site has no administrator. The first person to claim the role becomes the admin — this can only happen once.
-      </p>
-      <Button disabled={busy} onClick={claim}>Claim administrator role</Button>
-    </div>
-  );
-}
 function useDraws() { return useQuery({ queryKey: ["admin-draws"], queryFn: fetchAdminDraws }); }
 const drawLabel = (d: any) => `${d.game?.provider?.name} · ${d.game?.name} — ${fmt(d.scheduled_at)}`;
 
