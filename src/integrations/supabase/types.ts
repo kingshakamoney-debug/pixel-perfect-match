@@ -808,6 +808,7 @@ export type Database = {
         Returns: undefined
       }
       bootstrap_admin: { Args: never; Returns: boolean }
+      can_manage_content: { Args: { _user_id: string }; Returns: boolean }
       can_view_forecast_numbers: {
         Args: { _forecast_id: string }
         Returns: boolean
@@ -829,6 +830,10 @@ export type Database = {
         }[]
       }
       grant_admin: { Args: { _target_user: string }; Returns: undefined }
+      grant_role: {
+        Args: { _role: string; _target_user: string }
+        Returns: undefined
+      }
       has_premium: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -862,6 +867,10 @@ export type Database = {
         Returns: undefined
       }
       revoke_admin: { Args: { _target_user: string }; Returns: undefined }
+      revoke_role: {
+        Args: { _role: string; _target_user: string }
+        Returns: undefined
+      }
       score_result: { Args: { _result_id: string }; Returns: number }
       verify_result: { Args: { _result_id: string }; Returns: number }
     }
