@@ -31,6 +31,7 @@ export function SiteHeader() {
           <Link to="/history" className={link} activeProps={active}>History</Link>
           <Link to="/performance" className={link} activeProps={active}>Performance</Link>
           {user && <Link to="/dashboard" className={link} activeProps={active}>Forecasts</Link>}
+          {user && <Link to="/subscription" className={link} activeProps={active}>Membership</Link>}
           {isAdmin && <Link to="/admin" className={link} activeProps={active}>Admin</Link>}
         </nav>
         {user ? (
