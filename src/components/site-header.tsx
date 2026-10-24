@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsAdmin, useUser } from "@/lib/auth";
+import { useCanManageContent, useUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/lottowizard-logo.png.asset.json";
 
 export function SiteHeader() {
   const { user } = useUser();
-  const { data: isAdmin } = useIsAdmin(user?.id);
+  const { data: isAdmin } = useCanManageContent(user?.id);
   const qc = useQueryClient();
   const navigate = useNavigate();
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors";
