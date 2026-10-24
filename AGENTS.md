@@ -15,4 +15,4 @@
 - Premium forecast numbers are hidden by RLS (`can_view_forecast_numbers`) until the draw's result is verified or the viewer is entitled. Why: never leak future forecasts.
 - Published forecasts and verified results are never edited in place; corrections create a new version and supersede the old one with an audit log. Why: auditable history.
 - Pure scoring/validation helpers live in `src/lib/stats.ts` and `src/components/admin/helpers.ts` with vitest tests beside them.
-- The first account to sign up is bootstrapped as administrator (trigger `handle_new_user`).
+- Signups always start as plain members; the first admin is claimed once via the race-safe `bootstrap_admin()` RPC (advisory lock, only while zero admins exist), shown as a claim button on the Admin page. Why: automatic first-signup promotion let any first registrant silently become admin.
