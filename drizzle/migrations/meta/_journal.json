@@ -50,6 +50,13 @@
       "when": 1792833867430,
       "tag": "0006_superadmin_functions_and_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792833878501,
+      "tag": "0007_list_members_rpc",
+      "breakpoints": true
     }
   ]
 }

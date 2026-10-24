@@ -837,6 +837,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      list_members: {
+        Args: never
+        Returns: {
+          account_status: string
+          created_at: string
+          display_name: string
+          roles: Database["public"]["Enums"]["app_role"][]
+          user_id: string
+        }[]
+      }
       log_admin_action: {
         Args: {
           _action: string
