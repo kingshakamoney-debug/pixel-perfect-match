@@ -28,6 +28,17 @@ export function useIsAdmin(userId?: string) {
   });
 }
 
+export function useIsSuperadmin(userId?: string) {
+  return useQuery({
+    queryKey: ["is-superadmin", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", { _user_id: userId!, _role: "superadmin" });
+      return !!data;
+    },
+  });
+}
+
 export function useEntitlement(userId?: string) {
   return useQuery({
     queryKey: ["entitlement", userId],
