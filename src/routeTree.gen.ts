@@ -16,6 +16,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as PerformanceRouteImport } from './routes/performance'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ApiPublicJobsRenewalRemindersRouteImport } from './routes/api/public/jobs/renewal-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +52,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicJobsRenewalRemindersRoute =
+  ApiPublicJobsRenewalRemindersRouteImport.update({
+    id: '/api/public/jobs/renewal-reminders',
+    path: '/api/public/jobs/renewal-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/performance': typeof PerformanceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/public/jobs/renewal-reminders': typeof ApiPublicJobsRenewalRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/performance': typeof PerformanceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/public/jobs/renewal-reminders': typeof ApiPublicJobsRenewalRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,13 +86,27 @@ export interface FileRoutesById {
   '/performance': typeof PerformanceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/public/jobs/renewal-reminders': typeof ApiPublicJobsRenewalRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/history' | '/performance' | '/admin' | '/dashboard'
+    | '/'
+    | '/auth'
+    | '/history'
+    | '/performance'
+    | '/admin'
+    | '/dashboard'
+    | '/api/public/jobs/renewal-reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/history' | '/performance' | '/admin' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/history'
+    | '/performance'
+    | '/admin'
+    | '/dashboard'
+    | '/api/public/jobs/renewal-reminders'
   id:
     | '__root__'
     | '/'
@@ -93,6 +116,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/api/public/jobs/renewal-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -101,6 +125,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   HistoryRoute: typeof HistoryRoute
   PerformanceRoute: typeof PerformanceRoute
+  ApiPublicJobsRenewalRemindersRoute: typeof ApiPublicJobsRenewalRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/jobs/renewal-reminders': {
+      id: '/api/public/jobs/renewal-reminders'
+      path: '/api/public/jobs/renewal-reminders'
+      fullPath: '/api/public/jobs/renewal-reminders'
+      preLoaderRoute: typeof ApiPublicJobsRenewalRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -176,6 +208,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   HistoryRoute: HistoryRoute,
   PerformanceRoute: PerformanceRoute,
+  ApiPublicJobsRenewalRemindersRoute: ApiPublicJobsRenewalRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
