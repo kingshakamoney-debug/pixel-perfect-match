@@ -9,6 +9,8 @@ import { GameFilter } from "@/components/game-filter";
 export const Route = createFileRoute("/performance")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Performance statistics — LottoWizard" },
       { name: "description", content: "Combination and draw hit rates, match distribution and sample sizes." },
       { property: "og:title", content: "Performance statistics — LottoWizard" },

@@ -9,6 +9,10 @@ import logo from "@/assets/lottowizard-logo.png.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: logo.url },
+      { name: "twitter:image", content: logo.url },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "LottoWizard — Lotto forecasts with verified track records" },
       { name: "description", content: "Ghana NLA and Golden Chance forecasts, scored openly against official results." },
       { property: "og:title", content: "LottoWizard — Lotto forecasts with verified track records" },

@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Draw history — LottoWizard" },
       { name: "description", content: "Verified draws with the original published forecasts and match counts." },
       { property: "og:title", content: "Draw history — LottoWizard" },

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/members")({
-  head: () => ({ meta: [{ title: "Members — LottoWizard" }, { name: "description", content: "Manage administrator access." }] }),
+  head: () => ({ meta: [{ title: "Members — LottoWizard" }, { name: "description", content: "Manage administrator access." }, { property: "og:title", content: "Members — LottoWizard" }, { property: "og:description", content: "Manage administrator access." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: MembersAdmin,
 });
 

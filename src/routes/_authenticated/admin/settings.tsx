@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
-  head: () => ({ meta: [{ title: "Payment settings — LottoWizard" }, { name: "description", content: "Configure bank details, plans and reminders." }] }),
+  head: () => ({ meta: [{ title: "Payment settings — LottoWizard" }, { name: "description", content: "Configure bank details, plans and reminders." }, { property: "og:title", content: "Payment settings — LottoWizard" }, { property: "og:description", content: "Configure bank details, plans and reminders." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: SettingsAdmin,
 });
 
