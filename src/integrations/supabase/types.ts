@@ -828,6 +828,7 @@ export type Database = {
           reason: string
         }[]
       }
+      grant_admin: { Args: { _target_user: string }; Returns: undefined }
       has_premium: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -850,6 +851,7 @@ export type Database = {
         Args: { _reason: string; _request_id: string }
         Returns: undefined
       }
+      revoke_admin: { Args: { _target_user: string }; Returns: undefined }
       score_result: { Args: { _result_id: string }; Returns: number }
       verify_result: { Args: { _result_id: string }; Returns: number }
     }

@@ -43,6 +43,13 @@
       "when": 1792833849487,
       "tag": "0005_add_superadmin_enum_value",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792833867430,
+      "tag": "0006_superadmin_functions_and_policies",
+      "breakpoints": true
     }
   ]
 }
