@@ -44,7 +44,9 @@ See [docs/audit-report.md](docs/audit-report.md) for the full security audit and
 - [x] Public History and Performance pages with real database-backed statistics
 - [x] Premium gating of upcoming forecast numbers (database-enforced)
 - [x] Audit log of all administrative actions
-- [ ] Paystack monthly membership (checkout + webhook) — *needs Paystack keys*
+- [x] Manual bank-transfer memberships: configurable plans and bank details, receipt upload to private storage, admin review with verified amount/duration, atomic activation, duplicate-transaction protection
+- [x] Renewal reminders: daily scheduled job (7/3/1/0 days before expiry, admin-configurable), shown in the member dashboard; delivery records are idempotent per expiry date
+- [ ] Paystack online card payments (optional alternative checkout) — *needs Paystack keys*
 - [ ] 3-day free trial gated on verified email **and** verified phone — *needs an SMS provider choice*
 - [ ] Recurring draw schedules with automatic draw generation
 - [ ] Admin member management (suspend accounts, view trial/verification status)
@@ -65,7 +67,7 @@ See [docs/audit-report.md](docs/audit-report.md) for the full security audit and
 LottoWizard attacks the biggest problem in the lottery-tip market: **trust**. Tipsters everywhere claim win rates nobody can check. LottoWizard's entire product is a verifiable track record — forecasts are locked and timestamped before each draw, scored automatically against official results, and the full history (including misses) is public. That transparency is the moat: it converts skeptics into paying members and is nearly impossible for a competitor to fake retroactively.
 
 - **Market:** lottery play is mass-market across West Africa; Ghana's NLA and Nigeria's Golden Chance draw daily with huge informal tip economies around them.
-- **Model:** monthly subscription (Paystack, mobile-money friendly) with a 3-day trial; premium forecasts are the paywall, the public record is the marketing.
+- **Model:** monthly subscription (bank transfer today, Paystack card payments as an optional add-on) with a 3-day trial; premium forecasts are the paywall, the public record is the marketing.
 - **Moat:** an accumulating, independently checkable performance history — every verified draw makes the platform harder to dismiss and harder to clone.
 - **Status:** core platform and security-hardened admin tooling complete; payments and phone-verified trial are the next milestone to revenue.
 
