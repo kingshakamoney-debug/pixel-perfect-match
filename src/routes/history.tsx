@@ -10,9 +10,9 @@ import { Badge } from "@/components/ui/badge";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Draw history — DrawLens" },
+      { title: "Draw history — LottoWizard" },
       { name: "description", content: "Verified draws with the original published forecasts and match counts." },
-      { property: "og:title", content: "Draw history — DrawLens" },
+      { property: "og:title", content: "Draw history — LottoWizard" },
       { property: "og:description", content: "Every verified draw, the forecast published before it, and how many numbers matched." },
     ],
   }),

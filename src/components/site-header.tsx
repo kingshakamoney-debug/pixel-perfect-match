@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin, useUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/lottowizard-logo.png.asset.json";
 
 export function SiteHeader() {
   const { user } = useUser();
@@ -23,8 +24,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-          <span className="ball ball-hit h-7 w-7 text-xs">2+</span>
-          <span>DrawLens</span>
+          <img src={logo.url} alt="LottoWizard" className="h-9 w-9 rounded-full object-cover" />
+          <span>LottoWizard</span>
         </Link>
         <nav className="flex flex-1 items-center gap-5 overflow-x-auto">
           <Link to="/history" className={link} activeProps={active}>History</Link>

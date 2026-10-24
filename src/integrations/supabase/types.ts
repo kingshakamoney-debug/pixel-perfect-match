@@ -625,6 +625,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_admin: { Args: never; Returns: boolean }
       can_view_forecast_numbers: {
         Args: { _forecast_id: string }
         Returns: boolean

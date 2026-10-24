@@ -8,6 +8,20 @@
       "when": 1792829110486,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792830198796,
+      "tag": "0001_secure_admin_bootstrap",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792830508054,
+      "tag": "0002_restrict_definer_functions_from_anon",
+      "breakpoints": true
     }
   ]
 }

@@ -7,7 +7,7 @@ import { Balls } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Your forecasts — DrawLens" }, { name: "description", content: "Premium forecasts for upcoming draws." }] }),
+  head: () => ({ meta: [{ title: "Your forecasts — LottoWizard" }, { name: "description", content: "Premium forecasts for upcoming draws." }] }),
   component: Dashboard,
 });
 
