@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useIsAdmin, useIsSuperadmin, useUser } from "@/lib/auth";
+import { useCanManageContent, useIsAdmin, useIsSuperadmin, useUser } from "@/lib/auth";
 import { BootstrapAdmin } from "@/components/admin/bootstrap";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -9,10 +9,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminLayout() {
   const { user } = useUser();
+  const content = useCanManageContent(user?.id);
   const admin = useIsAdmin(user?.id);
   const superadmin = useIsSuperadmin(user?.id);
-  if (admin.isLoading || !user) return null;
-  if (!admin.data) return <BootstrapAdmin onDone={() => admin.refetch()} />;
+  if (content.isLoading || !user) return null;
+  if (!content.data) return <BootstrapAdmin onDone={() => content.refetch()} />;
   const link = "text-sm text-muted-foreground hover:text-foreground transition-colors";
   const active = { className: "text-sm text-foreground font-medium" };
   return (
@@ -21,8 +22,8 @@ function AdminLayout() {
         <h1 className="text-3xl font-bold">Admin</h1>
         <nav className="flex items-center gap-5">
           <Link to="/admin" activeOptions={{ exact: true }} className={link} activeProps={active}>Operations</Link>
-          <Link to="/admin/payments" className={link} activeProps={active}>Payments</Link>
-          <Link to="/admin/settings" className={link} activeProps={active}>Settings</Link>
+          {admin.data && <Link to="/admin/payments" className={link} activeProps={active}>Payments</Link>}
+          {admin.data && <Link to="/admin/settings" className={link} activeProps={active}>Settings</Link>}
           {superadmin.data && <Link to="/admin/members" className={link} activeProps={active}>Members</Link>}
         </nav>
       </div>
