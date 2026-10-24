@@ -447,6 +447,107 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requests: {
+        Row: {
+          claimed_amount: number
+          created_at: string
+          currency: string
+          description: string | null
+          granted_months: number | null
+          id: string
+          plan_id: string | null
+          receipt_path: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          transfer_date: string
+          transfer_reference: string
+          user_id: string
+          verified_amount: number | null
+          verified_currency: string | null
+          verified_reference: string | null
+        }
+        Insert: {
+          claimed_amount: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          granted_months?: number | null
+          id?: string
+          plan_id?: string | null
+          receipt_path?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          transfer_date: string
+          transfer_reference: string
+          user_id: string
+          verified_amount?: number | null
+          verified_currency?: string | null
+          verified_reference?: string | null
+        }
+        Update: {
+          claimed_amount?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          granted_months?: number | null
+          id?: string
+          plan_id?: string | null
+          receipt_path?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          transfer_date?: string
+          transfer_reference?: string
+          user_id?: string
+          verified_amount?: number | null
+          verified_currency?: string | null
+          verified_reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_requests_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_settings: {
+        Row: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          id: number
+          instructions: string
+          reminder_days: number[]
+          updated_at: string
+        }
+        Insert: {
+          account_name?: string
+          account_number?: string
+          bank_name?: string
+          id?: number
+          instructions?: string
+          reminder_days?: number[]
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          bank_name?: string
+          id?: number
+          instructions?: string
+          reminder_days?: number[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_status: string
@@ -501,6 +602,44 @@ export type Database = {
         }
         Relationships: []
       }
+      reminder_logs: {
+        Row: {
+          created_at: string
+          days_before: number
+          expires_at: string
+          id: string
+          reminder_key: string
+          status: string
+          subscription_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_before: number
+          expires_at: string
+          id?: string
+          reminder_key: string
+          status?: string
+          subscription_id: string
+        }
+        Update: {
+          created_at?: string
+          days_before?: number
+          expires_at?: string
+          id?: string
+          reminder_key?: string
+          status?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_logs_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       result_numbers: {
         Row: {
           id: string
@@ -529,6 +668,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          currency: string
+          duration_months: number
+          id: string
+          name: string
+          price: number
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          duration_months: number
+          id?: string
+          name: string
+          price: number
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          duration_months?: number
+          id?: string
+          name?: string
+          price?: number
+          sort_order?: number
+        }
+        Relationships: []
       }
       subscriptions: {
         Row: {
@@ -625,10 +797,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_payment: {
+        Args: {
+          _currency: string
+          _months: number
+          _reference: string
+          _request_id: string
+          _verified_amount: number
+        }
+        Returns: undefined
+      }
       bootstrap_admin: { Args: never; Returns: boolean }
       can_view_forecast_numbers: {
         Args: { _forecast_id: string }
         Returns: boolean
+      }
+      correct_subscription: {
+        Args: { _new_end: string; _reason: string; _subscription_id: string }
+        Returns: undefined
       }
       create_forecast_correction: {
         Args: { _forecast_id: string; _reason: string }
@@ -650,7 +836,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_admin_action: {
+        Args: {
+          _action: string
+          _entity_id: string
+          _entity_type: string
+          _reason: string
+        }
+        Returns: undefined
+      }
       publish_forecast: { Args: { _forecast_id: string }; Returns: undefined }
+      reject_payment: {
+        Args: { _reason: string; _request_id: string }
+        Returns: undefined
+      }
       score_result: { Args: { _result_id: string }; Returns: number }
       verify_result: { Args: { _result_id: string }; Returns: number }
     }

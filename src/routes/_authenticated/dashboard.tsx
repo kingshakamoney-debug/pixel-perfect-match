@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEntitlement, useUser } from "@/lib/auth";
 import { fmt } from "@/lib/data";
 import { Balls } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Your forecasts — LottoWizard" }, { name: "description", content: "Premium forecasts for upcoming draws." }] }),
@@ -37,6 +38,12 @@ function Dashboard() {
       return data as any[];
     },
   });
+  const reminders = useQuery({
+    queryKey: ["my-reminders", user?.id],
+    enabled: !!user,
+    queryFn: async () =>
+      (await supabase.from("reminder_logs").select("id,days_before,expires_at,created_at").order("created_at", { ascending: false }).limit(5)).data ?? [],
+  });
 
   return (
     <div className="space-y-6">
@@ -49,10 +56,20 @@ function Dashboard() {
           </Badge>
         )}
       </div>
+      {reminders.data && reminders.data.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/50 bg-primary/10 p-4">
+          <p className="text-sm">
+            Your membership expires on <span className="font-semibold">{fmt(reminders.data[0]!.expires_at)}</span>. Renew by bank transfer to keep your access — paid early renewals extend from your current expiry.
+          </p>
+          <Button size="sm" asChild><Link to="/subscription">Renew now</Link></Button>
+        </div>
+      )}
       {ent.data && !ent.data.allowed && (
         <div className="rounded-xl border bg-card p-6">
           <h2 className="font-semibold">Premium forecasts are locked</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Memberships and the 3-day free trial are coming soon. Past forecasts stay free on the History page.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Become a member by bank transfer on the <Link to="/subscription" className="underline">Membership page</Link>. Past forecasts stay free on the History page.
+          </p>
         </div>
       )}
       {ent.data?.allowed && forecasts.data?.length === 0 && <p className="text-muted-foreground">No forecasts published for upcoming draws yet.</p>}

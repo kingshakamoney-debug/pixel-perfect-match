@@ -22,6 +22,20 @@
       "when": 1792830508054,
       "tag": "0002_restrict_definer_functions_from_anon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792832799305,
+      "tag": "0003_bank_transfer_subscriptions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792833002764,
+      "tag": "0004_admin_payment_audit_rpcs",
+      "breakpoints": true
     }
   ]
 }
