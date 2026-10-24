@@ -25,7 +25,7 @@ export async function insertCombos(forecastId: string, combos: number[][]) {
     if (error) throw error;
     const { error: e2 } = await supabase
       .from("forecast_numbers")
-      .insert(combos[i].map((n) => ({ combination_id: c.id, number_value: n })));
+      .insert(combos[i]!.map((n) => ({ combination_id: c.id, number_value: n })));
     if (e2) throw e2;
   }
 }

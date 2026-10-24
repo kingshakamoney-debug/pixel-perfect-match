@@ -57,14 +57,14 @@ function DrawsTab() {
   const [cutoff, setCutoff] = useState(30);
 
   async function create() {
-    if (!gameId || !when) return toast.error("Pick a game and date");
+    if (!gameId || !when) { toast.error("Pick a game and date"); return; }
     const at = new Date(when);
     const { error } = await supabase.from("draws").insert({
       game_id: gameId,
       scheduled_at: at.toISOString(),
       publication_cutoff_at: new Date(at.getTime() - cutoff * 60000).toISOString(),
     });
-    if (error) return err(error);
+    if (error) { err(error); return; }
     toast.success("Draw created");
     qc.invalidateQueries();
   }
@@ -115,11 +115,11 @@ function StudioTab() {
   const draw = (draws.data ?? []).find((d) => d.id === drawId);
 
   async function save(publish: boolean) {
-    if (!draw) return toast.error("Select a draw");
+    if (!draw) { toast.error("Select a draw"); return; }
     const parsed = combos.map(parseNumbers);
     for (let i = 0; i < parsed.length; i++) {
-      const msg = validateCombo(parsed[i], draw.game, draw.game.numbers_per_combination);
-      if (msg) return toast.error(`Combination ${i + 1}: ${msg}`);
+      const msg = validateCombo(parsed[i]!, draw.game, draw.game.numbers_per_combination);
+      if (msg) { toast.error(`Combination ${i + 1}: ${msg}`); return; }
     }
     setBusy(true);
     try {
@@ -131,7 +131,7 @@ function StudioTab() {
         const { error: de } = await supabase.from("forecast_combinations").delete().eq("forecast_id", id);
         if (de) throw de;
       } else {
-        const { data, error } = await supabase.from("forecasts").insert({ draw_id: draw.id, forecast_type: type, created_by: (await supabase.auth.getUser()).data.user?.id }).select("id").single();
+        const { data, error } = await supabase.from("forecasts").insert({ draw_id: draw.id, forecast_type: type, created_by: (await supabase.auth.getUser()).data.user?.id ?? null }).select("id").single();
         if (error) throw error;
         id = data.id;
       }
@@ -149,12 +149,12 @@ function StudioTab() {
 
   async function publishDraft(id: string) {
     const { error } = await supabase.rpc("publish_forecast", { _forecast_id: id });
-    if (error) return err(error);
+    if (error) { err(error); return; }
     toast.success("Published"); qc.invalidateQueries();
   }
   async function deleteDraft(id: string) {
     const { error } = await supabase.from("forecasts").delete().eq("id", id);
-    if (error) return err(error);
+    if (error) { err(error); return; }
     qc.invalidateQueries();
   }
 
@@ -239,17 +239,17 @@ function ResultsTab() {
   const draw = past.find((d) => d.id === drawId);
 
   async function submit() {
-    if (!draw) return toast.error("Select a draw");
+    if (!draw) { toast.error("Select a draw"); return; }
     const parsed = parseNumbers(nums);
     const msg = validateCombo(parsed, draw.game, draw.game.numbers_drawn);
-    if (msg) return toast.error(msg);
-    if (!/^https?:\/\//.test(source)) return toast.error("Add the official source link");
-    if (draw.result_verified_at && !reason.trim()) return toast.error("A correction reason is required");
+    if (msg) { toast.error(msg); return; }
+    if (!/^https?:\/\//.test(source)) { toast.error("Add the official source link"); return; }
+    if (draw.result_verified_at && !reason.trim()) { toast.error("A correction reason is required"); return; }
     setBusy(true);
     try {
       const { data: r, error } = await supabase.from("draw_results").insert({
         draw_id: draw.id, source_url: source, correction_reason: draw.result_verified_at ? reason : null,
-        submitted_by: (await supabase.auth.getUser()).data.user?.id,
+        submitted_by: (await supabase.auth.getUser()).data.user?.id ?? null,
       }).select("id").single();
       if (error) throw error;
       const { error: e2 } = await supabase.from("result_numbers").insert(parsed.map((n) => ({ result_id: r.id, number_value: n })));
