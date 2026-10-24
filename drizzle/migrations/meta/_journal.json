@@ -57,6 +57,13 @@
       "when": 1792833878501,
       "tag": "0007_list_members_rpc",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792834333055,
+      "tag": "0008_add_subadmin_enum_value",
+      "breakpoints": true
     }
   ]
 }
