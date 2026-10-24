@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — DrawLens" }, { name: "description", content: "Manage draws, forecasts and results." }] }),
+  head: () => ({ meta: [{ title: "Admin — LottoWizard" }, { name: "description", content: "Manage draws, forecasts and results." }] }),
   component: Admin,
 });
 

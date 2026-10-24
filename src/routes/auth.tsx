@@ -10,9 +10,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — DrawLens" },
-      { name: "description", content: "Sign in or create your DrawLens account." },
-      { property: "og:title", content: "Sign in — DrawLens" },
+      { title: "Sign in — LottoWizard" },
+      { name: "description", content: "Sign in or create your LottoWizard account." },
+      { property: "og:title", content: "Sign in — LottoWizard" },
       { property: "og:description", content: "Access premium lotto forecasts." },
     ],
   }),
