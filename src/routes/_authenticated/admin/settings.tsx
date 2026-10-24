@@ -54,7 +54,7 @@ function SettingsAdmin() {
       reminder_days: days,
       updated_at: new Date().toISOString(),
     }).eq("id", 1);
-    if (!error) await supabase.rpc("log_admin_action", { _action: "update_payment_settings", _entity_type: "payment_settings", _entity_id: null, _reason: `Bank ${current.bank_name || "(unset)"} · reminders ${days.join("/")}d` });
+    if (!error) await supabase.rpc("log_admin_action", { _action: "update_payment_settings", _entity_type: "payment_settings", _entity_id: undefined, _reason: `Bank ${current.bank_name || "(unset)"} · reminders ${days.join("/")}d` });
     setBusy(false);
     if (error) { err(error); return; }
     toast.success("Settings saved");
@@ -81,7 +81,7 @@ function SettingsAdmin() {
       name: newPlan.name.trim(), duration_months: months, price, currency: newPlan.currency.trim() || "NGN",
       sort_order: (plans.data?.length ?? 0) + 1,
     });
-    if (!error) await supabase.rpc("log_admin_action", { _action: "add_plan", _entity_type: "subscription_plan", _entity_id: null, _reason: `${newPlan.name} · ${months}mo · ${newPlan.currency} ${price}` });
+    if (!error) await supabase.rpc("log_admin_action", { _action: "add_plan", _entity_type: "subscription_plan", _entity_id: undefined, _reason: `${newPlan.name} · ${months}mo · ${newPlan.currency} ${price}` });
     if (error) { err(error); return; }
     toast.success("Plan added");
     setNewPlan({ name: "", duration_months: "1", price: "", currency: "NGN" });
