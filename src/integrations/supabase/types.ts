@@ -553,6 +553,7 @@ export type Database = {
           account_status: string
           created_at: string
           display_name: string | null
+          handle: string | null
           updated_at: string
           user_id: string
         }
@@ -560,6 +561,7 @@ export type Database = {
           account_status?: string
           created_at?: string
           display_name?: string | null
+          handle?: string | null
           updated_at?: string
           user_id: string
         }
@@ -567,6 +569,7 @@ export type Database = {
           account_status?: string
           created_at?: string
           display_name?: string | null
+          handle?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -842,6 +845,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_handle_available: { Args: { _handle: string }; Returns: boolean }
       list_members: {
         Args: never
         Returns: {
@@ -855,9 +859,9 @@ export type Database = {
       log_admin_action: {
         Args: {
           _action: string
-          _entity_id: string
+          _entity_id?: string
           _entity_type: string
-          _reason: string
+          _reason?: string
         }
         Returns: undefined
       }

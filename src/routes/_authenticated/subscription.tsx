@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/subscription")({
-  head: () => ({ meta: [{ title: "Membership — LottoWizard" }, { name: "description", content: "Subscribe by bank transfer and track your payment." }] }),
+  head: () => ({ meta: [{ title: "Membership — LottoWizard" }, { name: "description", content: "Subscribe by bank transfer and track your payment." }, { property: "og:title", content: "Membership — LottoWizard" }, { property: "og:description", content: "Subscribe by bank transfer and track your payment." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: SubscriptionPage,
 });
 

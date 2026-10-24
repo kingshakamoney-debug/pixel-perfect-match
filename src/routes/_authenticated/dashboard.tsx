@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Your forecasts — LottoWizard" }, { name: "description", content: "Premium forecasts for upcoming draws." }] }),
+  head: () => ({ meta: [{ title: "Your forecasts — LottoWizard" }, { name: "description", content: "Premium forecasts for upcoming draws." }, { property: "og:title", content: "Your forecasts — LottoWizard" }, { property: "og:description", content: "Premium forecasts for upcoming draws." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Dashboard,
 });
 

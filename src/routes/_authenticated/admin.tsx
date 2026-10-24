@@ -3,7 +3,7 @@ import { useCanManageContent, useIsAdmin, useIsSuperadmin, useUser } from "@/lib
 import { BootstrapAdmin } from "@/components/admin/bootstrap";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — LottoWizard" }, { name: "description", content: "LottoWizard administration." }] }),
+  head: () => ({ meta: [{ title: "Admin — LottoWizard" }, { name: "description", content: "LottoWizard administration." }, { property: "og:title", content: "Admin — LottoWizard" }, { property: "og:description", content: "LottoWizard administration." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: AdminLayout,
 });
 

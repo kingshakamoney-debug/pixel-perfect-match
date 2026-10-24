@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
-  head: () => ({ meta: [{ title: "Payment settings — LottoWizard" }, { name: "description", content: "Configure bank details, plans and reminders." }] }),
+  head: () => ({ meta: [{ title: "Payment settings — LottoWizard" }, { name: "description", content: "Configure bank details, plans and reminders." }, { property: "og:title", content: "Payment settings — LottoWizard" }, { property: "og:description", content: "Configure bank details, plans and reminders." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: SettingsAdmin,
 });
 
@@ -57,7 +57,7 @@ function SettingsAdmin() {
       reminder_days: days,
       updated_at: new Date().toISOString(),
     }).eq("id", 1);
-    if (!error) await supabase.rpc("log_admin_action", { _action: "update_payment_settings", _entity_type: "payment_settings", _entity_id: undefined, _reason: `Bank ${current.bank_name || "(unset)"} · reminders ${days.join("/")}d` });
+    if (!error) await supabase.rpc("log_admin_action", { _action: "update_payment_settings", _entity_type: "payment_settings", _reason: `Bank ${current.bank_name || "(unset)"} · reminders ${days.join("/")}d` });
     setBusy(false);
     if (error) { err(error); return; }
     toast.success("Settings saved");
@@ -84,7 +84,7 @@ function SettingsAdmin() {
       name: newPlan.name.trim(), duration_months: months, price, currency: newPlan.currency.trim() || "NGN",
       sort_order: (plans.data?.length ?? 0) + 1,
     });
-    if (!error) await supabase.rpc("log_admin_action", { _action: "add_plan", _entity_type: "subscription_plan", _entity_id: undefined, _reason: `${newPlan.name} · ${months}mo · ${newPlan.currency} ${price}` });
+    if (!error) await supabase.rpc("log_admin_action", { _action: "add_plan", _entity_type: "subscription_plan", _reason: `${newPlan.name} · ${months}mo · ${newPlan.currency} ${price}` });
     if (error) { err(error); return; }
     toast.success("Plan added");
     setNewPlan({ name: "", duration_months: "1", price: "", currency: "NGN" });

@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/payments")({
-  head: () => ({ meta: [{ title: "Payment review — LottoWizard" }, { name: "description", content: "Review and verify bank-transfer subscription payments." }] }),
+  head: () => ({ meta: [{ title: "Payment review — LottoWizard" }, { name: "description", content: "Review and verify bank-transfer subscription payments." }, { property: "og:title", content: "Payment review — LottoWizard" }, { property: "og:description", content: "Review and verify bank-transfer subscription payments." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: PaymentsAdmin,
 });
 
