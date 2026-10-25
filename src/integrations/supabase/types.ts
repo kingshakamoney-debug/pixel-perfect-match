@@ -50,6 +50,27 @@ export type Database = {
         }
         Relationships: []
       }
+      countries: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       draw_results: {
         Row: {
           correction_reason: string | null
@@ -577,6 +598,7 @@ export type Database = {
       }
       providers: {
         Row: {
+          country_id: string | null
           created_at: string
           id: string
           name: string
@@ -586,6 +608,7 @@ export type Database = {
           timezone: string
         }
         Insert: {
+          country_id?: string | null
           created_at?: string
           id?: string
           name: string
@@ -595,6 +618,7 @@ export type Database = {
           timezone: string
         }
         Update: {
+          country_id?: string | null
           created_at?: string
           id?: string
           name?: string
@@ -603,7 +627,15 @@ export type Database = {
           status?: string
           timezone?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "providers_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reminder_logs: {
         Row: {
