@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Add country, provider, game and draw CRUD with a timezone-aware draw calendar
+- [x] Add country, provider, game and draw CRUD with a timezone-aware draw calendar
 
 - [x] Add country and provider creation before games in admin setup
 
