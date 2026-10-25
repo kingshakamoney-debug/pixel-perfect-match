@@ -11,7 +11,7 @@
 
 # Project rules
 
-- Country, provider and game creation lives on the admin-only Games page using RLS; countries link to providers and games inherit country through their provider, with creation invalidating shared queries. Why: setup follows country → provider → game without duplicating country data or exposing configuration to subadmins.
+- Country, provider and game CRUD lives on the admin-only Games page using RLS; countries link to providers and games inherit country through their provider, with mutations invalidating shared queries. Draw CRUD is admin-only, uses a game-timezone calendar with Temporal conversion, and protects published schedules in Postgres while allowing result-status updates. Why: setup stays ordered, subadmins cannot modify configuration, and clock changes cannot silently shift draws or rewrite published history.
 
 - Account handles are normalized, unique and immutable in Postgres; signup sends handle metadata and email remains the credential. Legacy/social accounts get generated handles to preserve existing sign-in and avoid deriving handles from private emails. Why: referral attribution needs a stable identity and browser-only uniqueness checks can race.
 

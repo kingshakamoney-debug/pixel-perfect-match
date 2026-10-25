@@ -6,6 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchGames, fmt } from "@/lib/data";
 import { fetchAdminDraws, insertCombos, parseNumbers, validateCombo } from "@/components/admin/helpers";
+import { DrawManager } from "@/components/admin/draw-manager";
 import { Balls } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ function Admin() {
         <TabsTrigger value="results">Results Centre</TabsTrigger>
         <TabsTrigger value="audit">Audit log</TabsTrigger>
       </TabsList>
-      <TabsContent value="draws"><DrawsTab /></TabsContent>
+      <TabsContent value="draws"><DrawManager /></TabsContent>
       <TabsContent value="studio"><StudioTab /></TabsContent>
       <TabsContent value="results"><ResultsTab /></TabsContent>
       <TabsContent value="audit"><AuditTab /></TabsContent>
@@ -111,7 +112,7 @@ function StudioTab() {
     if (!draw) { toast.error("Select a draw"); return; }
     const parsed = combos.map(parseNumbers);
     for (let i = 0; i < parsed.length; i++) {
-      const msg = validateCombo(parsed[i]!, draw.game, draw.game.numbers_per_combination);
+      const msg = validateCombo(parsed[i] ?? [], draw.game, draw.game.numbers_per_combination);
       if (msg) { toast.error(`Combination ${i + 1}: ${msg}`); return; }
     }
     setBusy(true);
