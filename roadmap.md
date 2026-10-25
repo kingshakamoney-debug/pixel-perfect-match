@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Add admin game creation with provider and number rules
+- [x] Add admin game creation with provider and number rules
 
 - [x] Replace sign-up name with a unique user handle; keep email sign-in
 
