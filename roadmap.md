@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Add country and provider creation before games in admin setup
+- [x] Add country and provider creation before games in admin setup
 
 - [x] Add admin game creation with provider and number rules
 
