@@ -4,7 +4,7 @@ import { CalendarDays, Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin, useUser } from "@/lib/auth";
-import { fetchGames, fmt } from "@/lib/data";
+import { fetchGames } from "@/lib/data";
 import { fetchAdminDraws } from "./helpers";
 import { drawLocal, drawSchedule } from "./draw-time";
 import { RecordActions, managementError } from "./record-actions";
