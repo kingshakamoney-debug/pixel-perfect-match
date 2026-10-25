@@ -4,8 +4,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchGames, fmt } from "@/lib/data";
+import { fmt } from "@/lib/data";
 import { fetchAdminDraws, insertCombos, parseNumbers, validateCombo } from "@/components/admin/helpers";
+import { DrawManager } from "@/components/admin/draw-manager";
 import { Balls } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ function Admin() {
         <TabsTrigger value="results">Results Centre</TabsTrigger>
         <TabsTrigger value="audit">Audit log</TabsTrigger>
       </TabsList>
-      <TabsContent value="draws"><DrawsTab /></TabsContent>
+      <TabsContent value="draws"><DrawManager /></TabsContent>
       <TabsContent value="studio"><StudioTab /></TabsContent>
       <TabsContent value="results"><ResultsTab /></TabsContent>
       <TabsContent value="audit"><AuditTab /></TabsContent>
@@ -40,59 +41,6 @@ const err = (e: unknown) => toast.error((e as any)?.message ?? String(e));
 
 function useDraws() { return useQuery({ queryKey: ["admin-draws"], queryFn: fetchAdminDraws }); }
 const drawLabel = (d: any) => `${d.game?.provider?.name} · ${d.game?.name} — ${fmt(d.scheduled_at)}`;
-
-function DrawsTab() {
-  const qc = useQueryClient();
-  const games = useQuery({ queryKey: ["games"], queryFn: fetchGames });
-  const draws = useDraws();
-  const [gameId, setGameId] = useState("");
-  const [when, setWhen] = useState("");
-  const [cutoff, setCutoff] = useState(30);
-
-  async function create() {
-    if (!gameId || !when) { toast.error("Pick a game and date"); return; }
-    const at = new Date(when);
-    const { error } = await supabase.from("draws").insert({
-      game_id: gameId,
-      scheduled_at: at.toISOString(),
-      publication_cutoff_at: new Date(at.getTime() - cutoff * 60000).toISOString(),
-    });
-    if (error) { err(error); return; }
-    toast.success("Draw created");
-    qc.invalidateQueries();
-  }
-
-  return (
-    <div className="space-y-6 pt-4">
-      <div className="grid gap-4 rounded-xl border bg-card p-5 md:grid-cols-4">
-        <div className="space-y-1"><Label>Game</Label>
-          <Select value={gameId} onValueChange={setGameId}>
-            <SelectTrigger><SelectValue placeholder="Select game" /></SelectTrigger>
-            <SelectContent>{(games.data ?? []).map((g) => <SelectItem key={g.id} value={g.id}>{g.provider?.name} · {g.name}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1"><Label>Draw time (your local time)</Label><Input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} /></div>
-        <div className="space-y-1"><Label>Forecast cutoff (minutes before)</Label><Input type="number" min={0} value={cutoff} onChange={(e) => setCutoff(Number(e.target.value))} /></div>
-        <div className="flex items-end"><Button onClick={create} className="w-full"><Plus className="mr-1 h-4 w-4" />Add draw</Button></div>
-      </div>
-      <div className="overflow-hidden rounded-xl border">
-        {(draws.data ?? []).map((d) => (
-          <div key={d.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-4 last:border-0">
-            <div>
-              <div className="font-medium">{d.game?.provider?.name} · {d.game?.name}</div>
-              <div className="text-xs text-muted-foreground">{fmt(d.scheduled_at)} · cutoff {fmt(d.publication_cutoff_at)}</div>
-            </div>
-            <div className="flex gap-2">
-              <Badge variant="secondary">{d.forecasts.filter((f: any) => f.status === "published").length ? "Forecast published" : "No forecast"}</Badge>
-              <Badge variant={d.result_verified_at ? "default" : "outline"}>{d.result_verified_at ? "Result verified" : d.draw_status}</Badge>
-            </div>
-          </div>
-        ))}
-        {draws.data?.length === 0 && <p className="p-6 text-sm text-muted-foreground">No draws yet.</p>}
-      </div>
-    </div>
-  );
-}
 
 function StudioTab() {
   const qc = useQueryClient();
@@ -111,7 +59,7 @@ function StudioTab() {
     if (!draw) { toast.error("Select a draw"); return; }
     const parsed = combos.map(parseNumbers);
     for (let i = 0; i < parsed.length; i++) {
-      const msg = validateCombo(parsed[i]!, draw.game, draw.game.numbers_per_combination);
+      const msg = validateCombo(parsed[i] ?? [], draw.game, draw.game.numbers_per_combination);
       if (msg) { toast.error(`Combination ${i + 1}: ${msg}`); return; }
     }
     setBusy(true);

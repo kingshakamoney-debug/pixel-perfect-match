@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchGames } from "@/lib/data";
 import { useIsAdmin, useUser } from "@/lib/auth";
 import { gameCode, gameSchema } from "@/components/admin/game-schema";
+import { RecordActions } from "@/components/admin/record-actions";
 import { CountrySelect, ProviderSetup } from "@/components/admin/provider-setup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,13 +34,14 @@ function GameManager() {
   const qc = useQueryClient();
   const games = useQuery({ queryKey: ["games"], queryFn: fetchGames });
   const providers = useQuery({ queryKey: ["game-providers"], queryFn: async () => {
-    const { data, error } = await supabase.from("providers").select("id,name,slug,timezone,country_id,country:countries(name)").eq("status", "active").order("name");
+    const { data, error } = await supabase.from("providers").select("id,name,slug,timezone,country_id,country:countries(name)").order("name");
     if (error) throw error;
     return data;
   } });
   const [form, setForm] = useState(initial);
   const [countryId, setCountryId] = useState("");
   const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,10 +49,13 @@ function GameManager() {
     if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Check the game rules"); return; }
     setBusy(true);
     try {
-      const { error } = await supabase.from("games").insert(parsed.data);
+      const query = editing ? supabase.from("games").update(parsed.data).eq("id", editing) : supabase.from("games").insert(parsed.data);
+      const { error } = await query.select("id").single();
       if (error) throw error;
       await qc.invalidateQueries({ queryKey: ["games"] });
-      toast.success("Game added");
+      toast.success(editing ? "Game updated" : "Game added");
+      setEditing(null);
+      await qc.invalidateQueries({ queryKey: ["admin-draws"] });
       setForm({ ...initial, provider_id: form.provider_id, timezone: form.timezone });
     } catch (error) {
       const failure = error as { code?: string; message?: string };
@@ -61,7 +66,7 @@ function GameManager() {
   return <div className="space-y-8">
     <ProviderSetup onProviderAdded={(provider) => { setCountryId(provider.country_id ?? ""); setForm((f) => ({ ...f, provider_id: provider.id, timezone: provider.timezone })); }} />
     <section>
-      <h2 className="mb-4 text-xl font-semibold">Add game</h2>
+      <h2 className="mb-4 text-xl font-semibold">{editing ? "Edit game" : "Add game"}</h2>
       <form onSubmit={create} className="grid max-w-3xl gap-4 sm:grid-cols-2">
         <CountrySelect id="game-country" value={countryId} onChange={(id) => { setCountryId(id); setForm((f) => ({ ...f, provider_id: "" })); }} />
         <div className="space-y-2"><Label htmlFor="game-provider">Provider</Label>
@@ -74,7 +79,7 @@ function GameManager() {
         <div className="space-y-2"><Label htmlFor="game-code">Unique game code</Label><Input id="game-code" required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
         <div className="space-y-2"><Label htmlFor="game-timezone">Timezone</Label><Input id="game-timezone" required value={form.timezone} onChange={(e) => setForm({ ...form, timezone: e.target.value })} /></div>
         {numberFields.map(({ key, label }) => <div key={key} className="space-y-2"><Label htmlFor={key}>{label}</Label><Input id={key} type="number" required step={1} min={key === "min_number" || key === "max_number" ? undefined : 1} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} /></div>)}
-        <div className="flex items-end"><Button type="submit" disabled={busy || providers.isPending || !form.provider_id}><Plus className="mr-2 h-4 w-4" />{busy ? "Adding…" : "Add game"}</Button></div>
+        <div className="flex items-end gap-2">{editing && <Button type="button" variant="outline" onClick={() => { setEditing(null); setForm(initial); setCountryId(""); }}>Cancel</Button>}<Button type="submit" disabled={busy || providers.isPending || !form.provider_id}><Save className="mr-2 h-4 w-4" />{busy ? "Saving…" : editing ? "Save game" : "Add game"}</Button></div>
       </form>
       {providers.error && <p className="mt-3 text-sm text-destructive">Could not load providers.</p>}
     </section>
@@ -85,6 +90,12 @@ function GameManager() {
       <div className="divide-y border-y">{games.data?.map((game) => <div key={game.id} className="flex flex-wrap items-center justify-between gap-3 py-4">
         <div><h3 className="font-medium">{game.name}</h3><p className="text-sm text-muted-foreground">{providers.data?.find((p) => p.id === game.provider?.id)?.country?.name ?? "Country not assigned"} · {game.provider?.name} · {game.timezone}</p></div>
         <p className="text-sm text-muted-foreground">{game.min_number}–{game.max_number} · {game.numbers_drawn} drawn · {game.numbers_per_combination} per forecast · {game.min_match_threshold}+ matches</p>
+        <RecordActions name={game.name} disabled={busy} onEdit={() => {
+          setEditing(game.id);
+          setCountryId(providers.data?.find((p) => p.id === game.provider?.id)?.country_id ?? "");
+          setForm({ provider_id: game.provider?.id ?? "", name: game.name, slug: game.slug, timezone: game.timezone, min_number: String(game.min_number), max_number: String(game.max_number), numbers_drawn: String(game.numbers_drawn), numbers_per_combination: String(game.numbers_per_combination), min_match_threshold: String(game.min_match_threshold) });
+          document.getElementById("game-name")?.focus();
+        }} onDelete={async () => { const { error } = await supabase.from("games").delete().eq("id", game.id).select("id").single(); if (error) throw error; if (editing === game.id) { setEditing(null); setForm(initial); } await qc.invalidateQueries(); toast.success("Game deleted"); }} />
       </div>)}</div>
     </section>
   </div>;
