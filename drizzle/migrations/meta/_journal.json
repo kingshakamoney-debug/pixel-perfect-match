@@ -92,6 +92,13 @@
       "when": 1792908167527,
       "tag": "0012_country_provider_setup",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792909373778,
+      "tag": "0013_protect_draw_schedule_history",
+      "breakpoints": true
     }
   ]
 }
