@@ -11,6 +11,8 @@
 
 # Project rules
 
+- Game creation lives on the admin-only Games page and uses existing games RLS; new games invalidate the shared games query so draw selectors update. Why: game configuration must remain admin-controlled and immediately reusable.
+
 - Account handles are normalized, unique and immutable in Postgres; signup sends handle metadata and email remains the credential. Legacy/social accounts get generated handles to preserve existing sign-in and avoid deriving handles from private emails. Why: referral attribution needs a stable identity and browser-only uniqueness checks can race.
 
 - Business rules (forecast publishing, cutoffs, result verification, scoring, entitlement) live in Postgres security-definer RPCs and RLS; the UI only calls them. Why: browser checks are bypassable.
