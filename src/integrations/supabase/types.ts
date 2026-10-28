@@ -842,6 +842,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      archive_years: {
+        Args: { _game_id: string }
+        Returns: {
+          draw_count: number
+          year: number
+        }[]
+      }
       bootstrap_admin: { Args: never; Returns: boolean }
       can_manage_content: { Args: { _user_id: string }; Returns: boolean }
       can_view_forecast_numbers: {
@@ -908,6 +915,16 @@ export type Database = {
         Returns: undefined
       }
       score_result: { Args: { _result_id: string }; Returns: number }
+      submit_result: {
+        Args: {
+          _bonus: number[]
+          _correction_reason: string
+          _draw_id: string
+          _numbers: number[]
+          _source_url: string
+        }
+        Returns: number
+      }
       verify_result: { Args: { _result_id: string }; Returns: number }
     }
     Enums: {
