@@ -17,6 +17,8 @@ import { Route as PerformanceRouteImport } from './routes/performance'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSubscriptionRouteImport } from './routes/_authenticated/subscription'
+import { Route as ArchiveIndexRouteImport } from './routes/archive.index'
+import { Route as ArchiveGameRouteImport } from './routes/archive.$game'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminGamesRouteImport } from './routes/_authenticated/admin/games'
 import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin/members'
@@ -64,6 +66,16 @@ const AuthenticatedSubscriptionRoute =
     path: '/subscription',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ArchiveIndexRoute = ArchiveIndexRouteImport.update({
+  id: '/archive/',
+  path: '/archive/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchiveGameRoute = ArchiveGameRouteImport.update({
+  id: '/archive/$game',
+  path: '/archive/$game',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -107,6 +119,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/subscription': typeof AuthenticatedSubscriptionRoute
+  '/archive/$game': typeof ArchiveGameRoute
+  '/archive/': typeof ArchiveIndexRoute
   '/admin/games': typeof AuthenticatedAdminGamesRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -121,6 +135,8 @@ export interface FileRoutesByTo {
   '/performance': typeof PerformanceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/subscription': typeof AuthenticatedSubscriptionRoute
+  '/archive/$game': typeof ArchiveGameRoute
+  '/archive': typeof ArchiveIndexRoute
   '/admin/games': typeof AuthenticatedAdminGamesRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -138,6 +154,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/subscription': typeof AuthenticatedSubscriptionRoute
+  '/archive/$game': typeof ArchiveGameRoute
+  '/archive/': typeof ArchiveIndexRoute
   '/_authenticated/admin/games': typeof AuthenticatedAdminGamesRoute
   '/_authenticated/admin/members': typeof AuthenticatedAdminMembersRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -155,6 +173,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/subscription'
+    | '/archive/$game'
+    | '/archive/'
     | '/admin/games'
     | '/admin/members'
     | '/admin/payments'
@@ -169,6 +189,8 @@ export interface FileRouteTypes {
     | '/performance'
     | '/dashboard'
     | '/subscription'
+    | '/archive/$game'
+    | '/archive'
     | '/admin/games'
     | '/admin/members'
     | '/admin/payments'
@@ -185,6 +207,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/subscription'
+    | '/archive/$game'
+    | '/archive/'
     | '/_authenticated/admin/games'
     | '/_authenticated/admin/members'
     | '/_authenticated/admin/payments'
@@ -199,6 +223,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   HistoryRoute: typeof HistoryRoute
   PerformanceRoute: typeof PerformanceRoute
+  ArchiveGameRoute: typeof ArchiveGameRoute
+  ArchiveIndexRoute: typeof ArchiveIndexRoute
   ApiPublicJobsRenewalRemindersRoute: typeof ApiPublicJobsRenewalRemindersRoute
 }
 
@@ -259,6 +285,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/subscription'
       preLoaderRoute: typeof AuthenticatedSubscriptionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/archive/': {
+      id: '/archive/'
+      path: '/archive'
+      fullPath: '/archive/'
+      preLoaderRoute: typeof ArchiveIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archive/$game': {
+      id: '/archive/$game'
+      path: '/archive/$game'
+      fullPath: '/archive/$game'
+      preLoaderRoute: typeof ArchiveGameRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -345,6 +385,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   HistoryRoute: HistoryRoute,
   PerformanceRoute: PerformanceRoute,
+  ArchiveGameRoute: ArchiveGameRoute,
+  ArchiveIndexRoute: ArchiveIndexRoute,
   ApiPublicJobsRenewalRemindersRoute: ApiPublicJobsRenewalRemindersRoute,
 }
 export const routeTree = rootRouteImport
