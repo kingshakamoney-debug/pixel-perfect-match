@@ -162,6 +162,7 @@ export type Database = {
       draws: {
         Row: {
           created_at: string
+          draw_number: string | null
           draw_status: string
           game_id: string
           id: string
@@ -172,6 +173,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          draw_number?: string | null
           draw_status?: string
           game_id: string
           id?: string
@@ -182,6 +184,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          draw_number?: string | null
           draw_status?: string
           game_id?: string
           id?: string
@@ -434,6 +437,117 @@ export type Database = {
             columns: ["provider_id"]
             isOneToOne: false
             referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_batches: {
+        Row: {
+          created_at: string
+          created_by: string
+          draw_time: string
+          format: string
+          game_id: string
+          id: string
+          published_at: string | null
+          source_url: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          draw_time: string
+          format: string
+          game_id: string
+          id?: string
+          published_at?: string | null
+          source_url: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          draw_time?: string
+          format?: string
+          game_id?: string
+          id?: string
+          published_at?: string | null
+          source_url?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batches_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_rows: {
+        Row: {
+          batch_id: string
+          draw_date: string | null
+          draw_id: string | null
+          draw_number: string | null
+          group1: string[]
+          group2: string[]
+          id: string
+          line_no: number
+          message: string | null
+          raw_text: string
+          result_id: string | null
+          status: string
+        }
+        Insert: {
+          batch_id: string
+          draw_date?: string | null
+          draw_id?: string | null
+          draw_number?: string | null
+          group1?: string[]
+          group2?: string[]
+          id?: string
+          line_no: number
+          message?: string | null
+          raw_text: string
+          result_id?: string | null
+          status: string
+        }
+        Update: {
+          batch_id?: string
+          draw_date?: string | null
+          draw_id?: string | null
+          draw_number?: string | null
+          group1?: string[]
+          group2?: string[]
+          id?: string
+          line_no?: number
+          message?: string | null
+          raw_text?: string
+          result_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_rows_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_rows_draw_id_fkey"
+            columns: ["draw_id"]
+            isOneToOne: false
+            referencedRelation: "draws"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_rows_result_id_fkey"
+            columns: ["result_id"]
+            isOneToOne: false
+            referencedRelation: "draw_results"
             referencedColumns: ["id"]
           },
         ]
@@ -884,6 +998,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      import_row_error: {
+        Args: {
+          _date: string
+          _g1: string[]
+          _g2: string[]
+          _max: number
+          _min: number
+          _num: string
+        }
+        Returns: string
+      }
       is_handle_available: { Args: { _handle: string }; Returns: boolean }
       list_members: {
         Args: never
@@ -905,6 +1030,7 @@ export type Database = {
         Returns: undefined
       }
       publish_forecast: { Args: { _forecast_id: string }; Returns: undefined }
+      publish_import: { Args: { _batch_id: string }; Returns: number }
       reject_payment: {
         Args: { _reason: string; _request_id: string }
         Returns: undefined
@@ -915,6 +1041,15 @@ export type Database = {
         Returns: undefined
       }
       score_result: { Args: { _result_id: string }; Returns: number }
+      stage_import: {
+        Args: {
+          _draw_time: string
+          _game_id: string
+          _rows: Json
+          _source_url: string
+        }
+        Returns: string
+      }
       submit_result: {
         Args: {
           _bonus: number[]
