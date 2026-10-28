@@ -33,7 +33,7 @@ export async function insertCombos(forecastId: string, combos: number[][]) {
 export async function fetchAdminDraws() {
   const { data, error } = await supabase
     .from("draws")
-    .select("id,scheduled_at,publication_cutoff_at,draw_status,result_verified_at,game_id,game:games(name,min_number,max_number,numbers_drawn,numbers_per_combination,provider:providers(name)),forecasts(id,status,version,forecast_type,published_at,correction_reason,forecast_combinations(id,combination_number,forecast_numbers(number_value))),draw_results(id,status,verified_at)")
+    .select("id,scheduled_at,publication_cutoff_at,draw_status,result_verified_at,game_id,game:games(name,min_number,max_number,numbers_drawn,numbers_per_combination,bonus_number_rules,provider:providers(name)),forecasts(id,status,version,forecast_type,published_at,correction_reason,forecast_combinations(id,combination_number,forecast_numbers(number_value))),draw_results(id,status,verified_at)")
     .order("scheduled_at", { ascending: false })
     .limit(100);
   if (error) throw error;

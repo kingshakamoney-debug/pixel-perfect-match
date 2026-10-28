@@ -23,6 +23,7 @@ function AdminLayout() {
         <nav className="flex flex-wrap items-center gap-5">
           <Link to="/admin" activeOptions={{ exact: true }} className={link} activeProps={active}>Operations</Link>
           {admin.data && <Link to="/admin/games" className={link} activeProps={active}>Games</Link>}
+          {admin.data && <Link to="/admin/import" className={link} activeProps={active}>Import</Link>}
           {admin.data && <Link to="/admin/payments" className={link} activeProps={active}>Payments</Link>}
           {admin.data && <Link to="/admin/settings" className={link} activeProps={active}>Settings</Link>}
           {superadmin.data && <Link to="/admin/members" className={link} activeProps={active}>Members</Link>}
