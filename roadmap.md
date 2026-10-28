@@ -10,7 +10,7 @@
 
 - [x] Core: accounts, admin draws, Forecast Studio, Results Centre with scoring, public history & performance
 - [x] Phase 1: free results archive, result integrity rules, entitlement privacy fix
-- [ ] Phase 2: CSV historical import (waiting for go-ahead)
+- [x] Phase 2: historical import with Golden Chance Morning-dew parser
 - [ ] Recurring draw schedules with automatic draw generation
 - [ ] 3-day trial with email + phone verification (blocked: choose SMS provider)
 - [ ] Paystack online card payments (optional alternative to bank transfer; blocked: Paystack keys)
