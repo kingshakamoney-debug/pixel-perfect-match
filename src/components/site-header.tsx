@@ -28,6 +28,7 @@ export function SiteHeader() {
           <span>LottoWizard</span>
         </Link>
         <nav className="flex flex-1 items-center gap-5 overflow-x-auto">
+          <Link to="/archive" className={link} activeProps={active}>Results</Link>
           <Link to="/history" className={link} activeProps={active}>History</Link>
           <Link to="/performance" className={link} activeProps={active}>Performance</Link>
           {user && <Link to="/dashboard" className={link} activeProps={active}>Forecasts</Link>}

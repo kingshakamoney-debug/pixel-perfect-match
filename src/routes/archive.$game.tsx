@@ -100,7 +100,7 @@ function GameArchive() {
               <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
                 {verified?.source_url && <a href={verified.source_url} target="_blank" rel="noreferrer" className="text-primary underline">Official source</a>}
                 {verified && <span>Verified {fmt(verified.verified_at)}</span>}
-                {corrections > 0 && <span>Corrected · version {verified?.version ?? corrections + 1}</span>}
+                {corrections > 0 && <span>Corrected · {corrections} earlier version{corrections === 1 ? "" : "s"} kept on record</span>}
               </div>
             </article>
           );

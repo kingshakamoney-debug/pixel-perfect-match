@@ -188,14 +188,10 @@ function ResultsTab() {
     if (draw.result_verified_at && !reason.trim()) { toast.error("A correction reason is required"); return; }
     setBusy(true);
     try {
-      const { data: r, error } = await supabase.from("draw_results").insert({
-        draw_id: draw.id, source_url: source, correction_reason: draw.result_verified_at ? reason : null,
-        submitted_by: (await supabase.auth.getUser()).data.user?.id ?? null,
-      }).select("id").single();
-      if (error) throw error;
-      const { error: e2 } = await supabase.from("result_numbers").insert(parsed.map((n) => ({ result_id: r.id, number_value: n })));
-      if (e2) throw e2;
-      const { data: scored, error: e3 } = await supabase.rpc("verify_result", { _result_id: r.id });
+      const { data: scored, error: e3 } = await supabase.rpc("submit_result", {
+        _draw_id: draw.id, _numbers: parsed, _bonus: [], _source_url: source,
+        _correction_reason: draw.result_verified_at ? reason : "",
+      });
       if (e3) throw e3;
       toast.success(`Result verified · ${scored} combination(s) scored`);
       setNums(""); setSource(""); setReason("");
