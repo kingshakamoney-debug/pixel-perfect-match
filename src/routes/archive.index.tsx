@@ -55,7 +55,7 @@ function ArchiveIndex() {
                   <ul className="mt-1 space-y-1">
                     {p.games.map((g) => (
                       <li key={g.id}>
-                        <Link to="/archive/$game" params={{ game: g.slug }} search={{}} className="text-primary underline-offset-4 hover:underline">
+                        <Link to="/archive/$game" params={{ game: g.slug }} search={{ page: 1 }} className="text-primary underline-offset-4 hover:underline">
                           {g.name}
                         </Link>
                         <span className="ml-2 text-xs text-muted-foreground">{g.numbers_drawn} from {g.min_number}–{g.max_number}</span>
