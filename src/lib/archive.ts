@@ -5,8 +5,8 @@ export const ARCHIVE_PAGE_SIZE = 50;
 
 /** Sanitise untrusted URL values for the archive page. */
 export function parseArchiveSearch(search: Record<string, unknown>): { year?: number | undefined; page: number } {
-  const y = Number(search.year);
-  const p = Number(search.page);
+  const y = Number(search['year']);
+  const p = Number(search['page']);
   return {
     year: Number.isInteger(y) && y >= 1900 && y <= 2200 ? y : undefined,
     page: Number.isInteger(p) && p >= 1 && p <= 100_000 ? p : 1,
