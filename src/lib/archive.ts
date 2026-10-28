@@ -61,7 +61,7 @@ export async function fetchArchiveYears(gameId: string) {
 }
 
 export type ArchiveDraw = {
-  id: string; scheduled_at: string; result_verified_at: string | null;
+  id: string; draw_number: string | null; scheduled_at: string; result_verified_at: string | null;
   draw_results: { id: string; status: string; source_url: string | null; verified_at: string | null; version: number;
     result_numbers: { number_value: number; number_type: string }[] }[];
 };
@@ -71,7 +71,7 @@ export async function fetchArchiveDraws(game: ArchiveGame, year: number | undefi
   const [from, to] = pageRange(page);
   let q = supabase
     .from("draws")
-    .select("id,scheduled_at,result_verified_at,draw_results(id,status,source_url,verified_at,version,result_numbers(number_value,number_type))", { count: "exact" })
+    .select("id,draw_number,scheduled_at,result_verified_at,draw_results(id,status,source_url,verified_at,version,result_numbers(number_value,number_type))", { count: "exact" })
     .eq("game_id", game.id)
     .lte("scheduled_at", new Date().toISOString())
     .order("scheduled_at", { ascending: false })
