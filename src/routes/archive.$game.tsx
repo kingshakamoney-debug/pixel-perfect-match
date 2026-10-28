@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchArchiveDraws, fetchArchiveGame, fetchArchiveYears, parseArchiveSearch, totalPages } from "@/lib/archive";
 import { fmt } from "@/lib/data";
+import { pad2 } from "@/lib/import-morning-dew";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -87,14 +88,14 @@ function GameArchive() {
           return (
             <article key={d.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="font-medium">{fmt(d.scheduled_at)}</div>
+                <div className="font-medium">{d.draw_number && <span className="mr-2 font-mono text-muted-foreground">#{d.draw_number}</span>}{fmt(d.scheduled_at)}</div>
                 {verified ? <Badge>Verified</Badge> : <Badge variant="secondary">Awaiting verified result</Badge>}
               </div>
               {verified ? (
                 <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                  {main.map((n) => <span key={n} className="ball ball-win">{n}</span>)}
-                  {bonus.length > 0 && <span className="mx-1 text-xs text-muted-foreground">bonus</span>}
-                  {bonus.map((n) => <span key={`b${n}`} className="ball">{n}</span>)}
+                  {main.map((n) => <span key={n} className="ball ball-win">{pad2(n)}</span>)}
+                  {bonus.length > 0 && <span className="mx-1 text-xs text-muted-foreground">machine / bonus</span>}
+                  {bonus.map((n) => <span key={`b${n}`} className="ball">{pad2(n)}</span>)}
                 </div>
               ) : <p className="mt-2 text-sm text-muted-foreground">No verified winning numbers yet.</p>}
               <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">

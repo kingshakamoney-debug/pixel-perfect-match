@@ -49,7 +49,7 @@ export function Balls({ numbers, hits, size }: { numbers: number[]; hits?: Set<n
   return (
     <div className="flex flex-wrap gap-1.5">
       {numbers.map((n) => (
-        <span key={n} className={`ball ${hits?.has(n) ? "ball-hit" : ""} ${size === "sm" ? "h-7 w-7 text-xs" : ""}`}>{n}</span>
+        <span key={n} className={`ball ${hits?.has(n) ? "ball-hit" : ""} ${size === "sm" ? "h-7 w-7 text-xs" : ""}`}>{String(n).padStart(2, "0")}</span>
       ))}
     </div>
   );

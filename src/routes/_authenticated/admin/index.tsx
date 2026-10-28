@@ -173,6 +173,7 @@ function ResultsTab() {
   const draws = useDraws();
   const [drawId, setDrawId] = useState("");
   const [nums, setNums] = useState("");
+  const [bonusNums, setBonusNums] = useState("");
   const [source, setSource] = useState("");
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -184,17 +185,23 @@ function ResultsTab() {
     const parsed = parseNumbers(nums);
     const msg = validateCombo(parsed, draw.game, draw.game.numbers_drawn);
     if (msg) { toast.error(msg); return; }
+    const bonusCount = Number(draw.game.bonus_number_rules?.count ?? 0);
+    const bonus = bonusCount ? parseNumbers(bonusNums) : [];
+    if (bonusCount) {
+      const bmsg = validateCombo(bonus, { min_number: draw.game.bonus_number_rules.min ?? draw.game.min_number, max_number: draw.game.bonus_number_rules.max ?? draw.game.max_number }, bonusCount);
+      if (bmsg) { toast.error(`Machine/bonus numbers: ${bmsg}`); return; }
+    }
     if (!/^https?:\/\//.test(source)) { toast.error("Add the official source link"); return; }
     if (draw.result_verified_at && !reason.trim()) { toast.error("A correction reason is required"); return; }
     setBusy(true);
     try {
       const { data: scored, error: e3 } = await supabase.rpc("submit_result", {
-        _draw_id: draw.id, _numbers: parsed, _bonus: [], _source_url: source,
+        _draw_id: draw.id, _numbers: parsed, _bonus: bonus, _source_url: source,
         _correction_reason: draw.result_verified_at ? reason : "",
       });
       if (e3) throw e3;
       toast.success(`Result verified · ${scored} combination(s) scored`);
-      setNums(""); setSource(""); setReason("");
+      setNums(""); setBonusNums(""); setSource(""); setReason("");
       qc.invalidateQueries();
     } catch (e) { err(e); }
     setBusy(false);
@@ -209,6 +216,9 @@ function ResultsTab() {
         </Select>
       </div>
       <div className="space-y-1"><Label>Winning numbers</Label><Input className="font-mono" value={nums} onChange={(e) => setNums(e.target.value)} placeholder="e.g. 4 19 27 62 88" /></div>
+      {Number(draw?.game.bonus_number_rules?.count ?? 0) > 0 && (
+        <div className="space-y-1"><Label>Machine / bonus numbers ({draw.game.bonus_number_rules.count})</Label><Input className="font-mono" value={bonusNums} onChange={(e) => setBonusNums(e.target.value)} placeholder="e.g. 10 13 69 21 63" /></div>
+      )}
       <div className="space-y-1"><Label>Official source link</Label><Input value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://" /></div>
       {draw?.result_verified_at && (
         <div className="space-y-1"><Label>Correction reason</Label><Input value={reason} onChange={(e) => setReason(e.target.value)} /></div>
