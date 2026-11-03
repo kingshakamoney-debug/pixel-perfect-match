@@ -88,7 +88,7 @@ function GameArchive() {
           return (
             <article key={d.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="font-medium">{d.draw_number && <span className="mr-2 font-mono text-muted-foreground">#{d.draw_number}</span>}{fmt(d.scheduled_at)}</div>
+                <div className="font-medium">{d.draw_number && <span className="mr-2 font-mono text-muted-foreground">#{d.draw_number}</span>}{new Date(d.scheduled_at).toLocaleString(undefined, { timeZone: g.timezone, dateStyle: "medium", timeStyle: "short" })}{d.time_status !== "confirmed" && <span className="ml-2 text-xs text-muted-foreground">Time {d.time_status === "provisional" ? "provisional" : "unconfirmed"}</span>}</div>
                 {verified ? <Badge>Verified</Badge> : <Badge variant="secondary">Awaiting verified result</Badge>}
               </div>
               {verified ? (

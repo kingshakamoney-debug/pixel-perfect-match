@@ -169,6 +169,7 @@ export type Database = {
           publication_cutoff_at: string
           result_verified_at: string | null
           scheduled_at: string
+          time_status: string
           updated_at: string
         }
         Insert: {
@@ -180,6 +181,7 @@ export type Database = {
           publication_cutoff_at: string
           result_verified_at?: string | null
           scheduled_at: string
+          time_status?: string
           updated_at?: string
         }
         Update: {
@@ -191,6 +193,7 @@ export type Database = {
           publication_cutoff_at?: string
           result_verified_at?: string | null
           scheduled_at?: string
+          time_status?: string
           updated_at?: string
         }
         Relationships: [
@@ -386,6 +389,7 @@ export type Database = {
         Row: {
           bonus_number_rules: Json | null
           created_at: string
+          default_draw_time: string | null
           id: string
           max_number: number
           min_match_threshold: number
@@ -394,6 +398,7 @@ export type Database = {
           numbers_drawn: number
           numbers_per_combination: number
           provider_id: string
+          schedule_status: string
           slug: string
           status: string
           timezone: string
@@ -402,6 +407,7 @@ export type Database = {
         Insert: {
           bonus_number_rules?: Json | null
           created_at?: string
+          default_draw_time?: string | null
           id?: string
           max_number: number
           min_match_threshold?: number
@@ -410,6 +416,7 @@ export type Database = {
           numbers_drawn: number
           numbers_per_combination: number
           provider_id: string
+          schedule_status?: string
           slug: string
           status?: string
           timezone: string
@@ -418,6 +425,7 @@ export type Database = {
         Update: {
           bonus_number_rules?: Json | null
           created_at?: string
+          default_draw_time?: string | null
           id?: string
           max_number?: number
           min_match_threshold?: number
@@ -426,6 +434,7 @@ export type Database = {
           numbers_drawn?: number
           numbers_per_combination?: number
           provider_id?: string
+          schedule_status?: string
           slug?: string
           status?: string
           timezone?: string
@@ -498,6 +507,8 @@ export type Database = {
           message: string | null
           raw_text: string
           result_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: string
         }
         Insert: {
@@ -512,6 +523,8 @@ export type Database = {
           message?: string | null
           raw_text: string
           result_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status: string
         }
         Update: {
@@ -526,6 +539,8 @@ export type Database = {
           message?: string | null
           raw_text?: string
           result_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
         }
         Relationships: [
@@ -1034,6 +1049,10 @@ export type Database = {
       reject_payment: {
         Args: { _reason: string; _request_id: string }
         Returns: undefined
+      }
+      review_import_result: {
+        Args: { _checked: boolean; _row_id: string }
+        Returns: number
       }
       revoke_admin: { Args: { _target_user: string }; Returns: undefined }
       revoke_role: {

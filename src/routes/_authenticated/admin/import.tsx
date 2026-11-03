@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchGames } from "@/lib/data";
@@ -34,22 +34,27 @@ function Importer() {
   const qc = useQueryClient();
   const games = useQuery({ queryKey: ["games"], queryFn: fetchGames });
   const [gameId, setGameId] = useState("");
-  const [source, setSource] = useState("https://www.goldenchancelotto.com/");
-  const [drawTime, setDrawTime] = useState("10:00");
+  const [source, setSource] = useState("");
+  const [drawTime, setDrawTime] = useState("");
   const [text, setText] = useState("");
   const [rows, setRows] = useState<ParsedRow[] | null>(null);
   const [reviewed, setReviewed] = useState(false);
   const [batchId, setBatchId] = useState<string | null>(null);
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
   const game = games.data?.find((g) => g.id === gameId);
 
+  useEffect(() => { setDrawTime(game?.default_draw_time?.slice(0, 5) ?? ""); setSource(game?.provider?.source_url ?? ""); }, [game]);
+
+  const batches = useQuery({ queryKey: ["import-batches", gameId], enabled: !!gameId, queryFn: async () => { const { data, error } = await supabase.from("import_batches").select("id,status,created_at").eq("game_id", gameId).order("created_at", { ascending: false }); if (error) throw error; return data; } });
   const batch = useQuery({
     queryKey: ["import-batch", batchId],
     enabled: !!batchId,
     queryFn: async () => {
+      if (!batchId) throw new Error("Select a batch");
       const [{ data: b, error: e1 }, { data: r, error: e2 }] = await Promise.all([
-        supabase.from("import_batches").select("*").eq("id", batchId!).single(),
-        supabase.from("import_rows").select("*, draw_result:draw_results(status)").eq("batch_id", batchId!).order("line_no"),
+        supabase.from("import_batches").select("*").eq("id", batchId).single(),
+        supabase.from("import_rows").select("*, draw_result:draw_results(status)").eq("batch_id", batchId).order("line_no"),
       ]);
       if (e1) throw e1; if (e2) throw e2;
       return { batch: b, rows: (r ?? []) as any[] };
@@ -89,19 +94,16 @@ function Importer() {
     qc.invalidateQueries();
   }
 
-  async function verifyAll() {
-    const pending = (batch.data?.rows ?? []).filter((r) => r.status === "published" && r.draw_result?.status === "pending");
-    if (!pending.length) return;
+  async function verifyRow(rowId: string) {
+    if (!checked[rowId]) return;
     setBusy(true);
-    let ok = 0;
-    for (const r of pending) {
-      const { error } = await supabase.rpc("verify_result", { _result_id: r.result_id });
-      if (error) { err(`Draw ${r.draw_number}: ${error.message}`); break; }
-      ok++;
-    }
-    setBusy(false);
-    toast.success(`${ok} result(s) verified and scored`);
-    qc.invalidateQueries();
+    try {
+      const { data, error } = await supabase.rpc("review_import_result", { _row_id: rowId, _checked: true });
+      if (error) throw error;
+      toast.success(`Record verified · ${data} combination(s) scored`);
+      setChecked((c) => ({ ...c, [rowId]: false }));
+      await qc.invalidateQueries();
+    } catch (error) { err(error); } finally { setBusy(false); }
   }
 
   const valid = rows?.filter((r) => !r.error).length ?? 0;
@@ -109,6 +111,7 @@ function Importer() {
 
   return (
     <div className="space-y-6">
+      <div className="space-y-1"><Label>Previous import batch</Label><Select value={batchId ?? ""} onValueChange={(v) => { setBatchId(v); setChecked({}); }}><SelectTrigger><SelectValue placeholder="Select a game, then a batch" /></SelectTrigger><SelectContent>{batches.data?.map((b) => <SelectItem key={b.id} value={b.id}>{b.status} · {new Date(b.created_at).toLocaleString()}</SelectItem>)}</SelectContent></Select></div>
       <div className="grid gap-4 rounded-xl border bg-card p-5 md:grid-cols-2">
         <div className="space-y-1"><Label>Game</Label>
           <Select value={gameId} onValueChange={(v) => { setGameId(v); setRows(null); setBatchId(null); }}>
@@ -118,7 +121,7 @@ function Importer() {
         </div>
         <div className="space-y-1"><Label>Format</Label><Input value="Golden Chance Morning-dew (two groups of five)" disabled /></div>
         <div className="space-y-1"><Label>Official source link</Label><Input value={source} onChange={(e) => setSource(e.target.value)} /></div>
-        <div className="space-y-1"><Label>Draw time ({game?.timezone ?? "game timezone"})</Label><Input type="time" value={drawTime} onChange={(e) => setDrawTime(e.target.value)} /></div>
+        <div className="space-y-1"><Label>Draw time ({game?.timezone ?? "game timezone"} · {game?.schedule_status ?? "unspecified"})</Label><Input type="time" value={drawTime} onChange={(e) => setDrawTime(e.target.value)} /></div>
         <div className="space-y-1 md:col-span-2">
           <Label>Paste results or CSV</Label>
           <Textarea rows={8} className="font-mono text-xs" value={text} onChange={(e) => setText(e.target.value)}
@@ -151,8 +154,9 @@ function Importer() {
           <p className="text-sm text-muted-foreground">Publishing adds results as <strong>awaiting verification</strong>. Error and conflict rows are never written; existing results are never overwritten.</p>
           <div className="flex flex-wrap gap-2">
             {batch.data.batch.status === "staged" && <Button disabled={busy || !counts["valid"]} onClick={publish}>Publish {counts["valid"] ?? 0} row(s)</Button>}
-            {pendingCount > 0 && <Button variant="outline" disabled={busy} onClick={verifyAll}>Verify {pendingCount} against source &amp; score</Button>}
+            {pendingCount > 0 && <Badge variant="secondary">{pendingCount} awaiting individual source review</Badge>}
           </div>
+          <div className="divide-y border-y">{batch.data.rows.filter((r) => r.status === "published" && r.draw_result?.status === "pending").map((r) => <div key={r.id} className="flex flex-wrap items-center gap-3 py-3"><span className="font-mono">#{r.draw_number} · {r.draw_date}</span><span>Winning: <Nums g={r.group1} /> · Machine: <Nums g={r.group2} /></span><a className="text-primary underline" href={game?.provider?.source_url ?? batch.data.batch.source_url} target="_blank" rel="noreferrer">Results reference</a><label className="flex items-center gap-2 text-sm"><Checkbox checked={!!checked[r.id]} onCheckedChange={(v) => setChecked((c) => ({ ...c, [r.id]: v === true }))} />I checked this record against the source</label><Button disabled={busy || !checked[r.id]} onClick={() => verifyRow(r.id)}>Verify &amp; score #{r.draw_number}</Button></div>)}</div>
           <PreviewTable rows={batch.data.rows.map((r) => ({ key: r.id, raw: r.raw_text, num: r.draw_number, date: r.draw_date, g1: r.group1, g2: r.group2, status: r.status === "published" && r.draw_result?.status === "verified" ? "verified" : r.status, msg: r.message }))} />
         </section>
       )}
@@ -166,7 +170,7 @@ function PreviewTable({ rows }: { rows: Row[] }) {
     <div className="overflow-x-auto rounded-xl border">
       <table className="w-full text-sm">
         <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
-          <tr><th className="p-2">Source text</th><th className="p-2">Draw</th><th className="p-2">Date</th><th className="p-2">Group 1</th><th className="p-2">Group 2</th><th className="p-2">Status</th></tr>
+          <tr><th className="p-2">Source text</th><th className="p-2">Draw</th><th className="p-2">Date</th><th className="p-2">Winning numbers</th><th className="p-2">Machine numbers</th><th className="p-2">Status</th></tr>
         </thead>
         <tbody>
           {rows.map((r) => (
