@@ -34,6 +34,7 @@ Machine-number forecasts and separately labelled machine performance statistics 
 - Admin schedule changed to 11:16, saved and read back, then restored to provisional 11:15. Archive displays provisional historical times.
 - No successful verification was performed on supplied records: none were checked against operator records during this change. Positive verification/scoring of those records intentionally remains untested until actual source review.
 - Latest preview build: OK.
+- Final database readback: 42 imported rows, 42 pending, zero verified, zero reviewed, zero changed dates, zero changed original times and zero changed source provenance; Morning Dew has zero forecast scores.
 
 ### Remaining uncertainties
 Operator-confirmed draw time and record-by-record source review remain outstanding. The official URL supplied by the user is a reference, not proof of any individual result. No unrelated feature work or machine forecast implementation was started.
