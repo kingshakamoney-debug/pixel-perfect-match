@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Phase 2 follow-up: separate groups, provisional schedule, corrected source and individual verification safeguards
+- [x] Phase 2 follow-up: separate groups, provisional schedule, corrected source and individual verification safeguards
 
 - [x] Add country, provider, game and draw CRUD with a timezone-aware draw calendar
 

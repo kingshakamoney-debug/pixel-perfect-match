@@ -9,17 +9,34 @@
 - Archive shows `#draw number`, two-digit padding (`09`) and machine/bonus numbers.
 - Example file: `docs/import-examples/goldenchance_morning_dew_2026.txt`.
 
-## Storage mapping (assumption — please confirm)
+## Storage mapping (confirmed by Phase 2 follow-up)
 - Group 1 → winning numbers (`regular`), Group 2 → machine numbers (`bonus`).
 - Morning Dew configured with `bonus_number_rules = {count:5,min:1,max:90}`. Results Centre now asks for machine numbers on games with bonus rules.
 - Stored as integers; display pads to two digits, so `09` round-trips. Original text kept in `import_rows.raw_text`.
 
-## Scoring — unchanged, open questions
-Scoring still matches forecasts against Group 1 only with the game's existing 2+ threshold. Not verified from authoritative docs:
-1. Are Group 2 (machine) numbers ever counted as hits?
-2. Is the official draw time 10:00 Lagos? (Import uses the time entered by the admin.)
-3. Is 2+ the right success threshold for Morning Dew?
-4. Official source URL for provenance.
+## Scoring — unchanged
+Scoring matches regular forecast numbers against Group 1 winning numbers only. The database configuration was checked: Morning Dew is 5/90, five numbers per combination, five machine numbers, and a 2+ winning-match success threshold. `score_result` filters both sides to `number_type='regular'`; machine matches never enter the existing score. No historical scores or other games were rescored.
+
+Machine-number forecasts and separately labelled machine performance statistics are **not implemented** and remain a separate future enhancement. Independent helper tests demonstrate one winning match versus four machine matches for the same prediction; winning success remains false. Operator confirmation of the success threshold remains outstanding; the configured 2+ rule is retained, not represented as an official payout rule.
+
+## Phase 2 follow-up — schedule, source and review safeguards
+- Game defaults now store a configurable draw time and certainty. Morning Dew defaults to **11:15 Africa/Lagos, provisional**; the secondary-listing time has not been operator-confirmed. Admin Games can edit it, and new draw/import forms use it instead of 10:00.
+- Existing imported draw timestamps remain at the original 10:00 Lagos placeholder; they are labelled provisional. Historical dates, number groups and results are not rewritten when the default changes. New draws snapshot schedule certainty rather than inheriting later edits.
+- Official results reference corrected to https://goldenchancelotto.com/results/index.html. Original batch and result source URLs remain as provenance; no guessed original source is silently overwritten. The review link uses the corrected reference. Neither URL establishes record verification.
+- Previous batches can be reopened. The bulk-verify action is removed; each pending record has its own source-check confirmation and Verify & score action.
+- `review_import_result` atomically checks stored import groups against stored result groups, validates Morning Dew configuration and row values, records reviewer/time and an audit entry, then calls `verify_result`.
+- A database verification-transition trigger rechecks counts, distinctness, ranges and group types. It rejects initial imported verification without individual review, including alternate direct `verify_result` / `submit_result` paths. Existing correction/version/audit behavior remains in place.
+
+### Follow-up test outcomes
+- 31 targeted tests passed across scoring, parser, game schedule validation, timezone conversion and archive helpers.
+- Authenticated browser: reopened the actual published batch; 42 rows awaiting individual source review; Verify & score disabled until its record checkbox is checked.
+- Authenticated backend: unchecked review rejected; calling `verify_result` directly on an unreviewed imported record rejected.
+- Admin schedule changed to 11:16, saved and read back, then restored to provisional 11:15. Archive displays provisional historical times.
+- No successful verification was performed on supplied records: none were checked against operator records during this change. Positive verification/scoring of those records intentionally remains untested until actual source review.
+- Latest preview build: OK.
+
+### Remaining uncertainties
+Operator-confirmed draw time and record-by-record source review remain outstanding. The official URL supplied by the user is a reference, not proof of any individual result. No unrelated feature work or machine forecast implementation was started.
 
 ## Tests
 `src/lib/import-morning-dew.test.ts` (10 tests): 0671, leading zeros in 0674/0688/0695, 0712 as latest date, whole-file count, CSV, malformed dates/lengths, missing separators/groups, range, duplicates. Server rules (permissions, conflicts, idempotency, audit) verified end-to-end in the browser: 42 rows staged and published as pending, one malformed row rejected, re-staging produced 42 conflicts, 2 audit entries.
