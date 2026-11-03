@@ -3,13 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 export type Game = {
   id: string; name: string; slug: string; min_number: number; max_number: number;
   numbers_drawn: number; numbers_per_combination: number; min_match_threshold: number; timezone: string;
-  provider: { id: string; name: string } | null;
+  default_draw_time: string | null; schedule_status: string;
+  provider: { id: string; name: string; source_url: string | null } | null;
 };
 
 export async function fetchGames(): Promise<Game[]> {
   const { data, error } = await supabase
     .from("games")
-    .select("id,name,slug,min_number,max_number,numbers_drawn,numbers_per_combination,min_match_threshold,timezone,provider:providers(id,name)")
+    .select("id,name,slug,min_number,max_number,numbers_drawn,numbers_per_combination,min_match_threshold,timezone,default_draw_time,schedule_status,provider:providers(id,name,source_url)")
     .order("name");
   if (error) throw error;
   return data as unknown as Game[];

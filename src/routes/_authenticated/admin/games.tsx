@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/admin/games")({
   component: GamesAdmin,
 });
 
-const initial = { provider_id: "", name: "", slug: "", timezone: "Africa/Accra", min_number: "1", max_number: "90", numbers_drawn: "5", numbers_per_combination: "5", min_match_threshold: "2" };
+const initial = { provider_id: "", name: "", slug: "", timezone: "Africa/Accra", default_draw_time: "", schedule_status: "unspecified" as "unspecified" | "provisional" | "confirmed", min_number: "1", max_number: "90", numbers_drawn: "5", numbers_per_combination: "5", min_match_threshold: "2" };
 const numberFields = [{ key: "min_number", label: "Minimum number" }, { key: "max_number", label: "Maximum number" }, { key: "numbers_drawn", label: "Winning numbers drawn" }, { key: "numbers_per_combination", label: "Numbers per forecast" }, { key: "min_match_threshold", label: "Matches needed for success" }] as const;
 
 function GamesAdmin() {
@@ -78,6 +78,8 @@ function GameManager() {
         <div className="space-y-2"><Label htmlFor="game-name">Game name</Label><Input id="game-name" required value={form.name} onChange={(e) => { const name = e.target.value; setForm((f) => ({ ...f, name, slug: f.slug === gameCode(f.name) ? gameCode(name) : f.slug })); }} /></div>
         <div className="space-y-2"><Label htmlFor="game-code">Unique game code</Label><Input id="game-code" required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
         <div className="space-y-2"><Label htmlFor="game-timezone">Timezone</Label><Input id="game-timezone" required value={form.timezone} onChange={(e) => setForm({ ...form, timezone: e.target.value })} /></div>
+        <div className="space-y-2"><Label htmlFor="game-default-time">Default draw time</Label><Input id="game-default-time" type="time" value={form.default_draw_time} onChange={(e) => setForm({ ...form, default_draw_time: e.target.value })} /></div>
+        <div className="space-y-2"><Label>Schedule certainty</Label><Select value={form.schedule_status} onValueChange={(v: "unspecified" | "provisional" | "confirmed") => setForm({ ...form, schedule_status: v })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="unspecified">Unspecified</SelectItem><SelectItem value="provisional">Provisional — not operator-confirmed</SelectItem><SelectItem value="confirmed">Operator-confirmed</SelectItem></SelectContent></Select></div>
         {numberFields.map(({ key, label }) => <div key={key} className="space-y-2"><Label htmlFor={key}>{label}</Label><Input id={key} type="number" required step={1} min={key === "min_number" || key === "max_number" ? undefined : 1} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} /></div>)}
         <div className="flex items-end gap-2">{editing && <Button type="button" variant="outline" onClick={() => { setEditing(null); setForm(initial); setCountryId(""); }}>Cancel</Button>}<Button type="submit" disabled={busy || providers.isPending || !form.provider_id}><Save className="mr-2 h-4 w-4" />{busy ? "Saving…" : editing ? "Save game" : "Add game"}</Button></div>
       </form>
@@ -93,7 +95,7 @@ function GameManager() {
         <RecordActions name={game.name} disabled={busy} onEdit={() => {
           setEditing(game.id);
           setCountryId(providers.data?.find((p) => p.id === game.provider?.id)?.country_id ?? "");
-          setForm({ provider_id: game.provider?.id ?? "", name: game.name, slug: game.slug, timezone: game.timezone, min_number: String(game.min_number), max_number: String(game.max_number), numbers_drawn: String(game.numbers_drawn), numbers_per_combination: String(game.numbers_per_combination), min_match_threshold: String(game.min_match_threshold) });
+          setForm({ provider_id: game.provider?.id ?? "", name: game.name, slug: game.slug, timezone: game.timezone, default_draw_time: game.default_draw_time?.slice(0, 5) ?? "", schedule_status: game.schedule_status === "confirmed" ? "confirmed" : game.schedule_status === "provisional" ? "provisional" : "unspecified", min_number: String(game.min_number), max_number: String(game.max_number), numbers_drawn: String(game.numbers_drawn), numbers_per_combination: String(game.numbers_per_combination), min_match_threshold: String(game.min_match_threshold) });
           document.getElementById("game-name")?.focus();
         }} onDelete={async () => { const { error } = await supabase.from("games").delete().eq("id", game.id).select("id").single(); if (error) throw error; if (editing === game.id) { setEditing(null); setForm(initial); } await qc.invalidateQueries(); toast.success("Game deleted"); }} />
       </div>)}</div>

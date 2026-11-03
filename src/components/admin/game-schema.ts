@@ -8,6 +8,8 @@ export const gameSchema = z.object({
     try { new Intl.DateTimeFormat("en", { timeZone: value }); return true; }
     catch { return false; }
   }, "Enter a valid timezone, such as Africa/Accra"),
+  default_draw_time: z.string().regex(/^$|^([01]\d|2[0-3]):[0-5]\d$/, "Enter a valid draw time").optional().transform((v) => v || null),
+  schedule_status: z.enum(["unspecified", "provisional", "confirmed"]).default("unspecified"),
   min_number: z.coerce.number().int(),
   max_number: z.coerce.number().int(),
   numbers_drawn: z.coerce.number().int().positive(),
