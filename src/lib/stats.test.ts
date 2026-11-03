@@ -17,6 +17,14 @@ describe("forecast scoring rules", () => {
   it("no overlap yields zero hits", () => {
     expect(countHits([1, 2, 3, 4, 5], [10, 20, 30, 40, 50])).toBe(0);
   });
+  it("Morning Dew winning and machine matches stay independent", () => {
+    const winning = [32, 2, 89, 11, 88];
+    const machine = [10, 13, 69, 21, 63];
+    const forecast = [32, 10, 13, 69, 21];
+    expect(countHits(forecast, winning)).toBe(1);
+    expect(isSuccess(countHits(forecast, winning), 2)).toBe(false);
+    expect(countHits(forecast, machine)).toBe(4);
+  });
   it("respects a configured threshold", () => {
     expect(isSuccess(2, 3)).toBe(false);
   });

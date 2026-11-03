@@ -4,6 +4,12 @@ import { gameSchema } from "./game-schema";
 const game = { provider_id: "00000000-0000-4000-8000-000000000001", name: "National", slug: "national", timezone: "Africa/Accra", min_number: 1, max_number: 90, numbers_drawn: 5, numbers_per_combination: 5, min_match_threshold: 2 };
 
 describe("game rules", () => {
+  it("stores the provisional 11:15 Lagos schedule separately from historical draws", () => {
+    const configured = gameSchema.parse({ ...game, timezone: "Africa/Lagos", default_draw_time: "11:15", schedule_status: "provisional" });
+    expect(configured.default_draw_time).toBe("11:15");
+    expect(configured.schedule_status).toBe("provisional");
+    expect(configured).not.toHaveProperty("scheduled_at");
+  });
   it("supports the existing 5/90 game with 2+ matches", () => {
     expect(gameSchema.parse(game).min_match_threshold).toBe(2);
   });
