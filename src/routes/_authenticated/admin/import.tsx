@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchGames } from "@/lib/data";
-import { useCanManageContent, useUser } from "@/lib/auth";
+import { useIsAdmin, useUser } from "@/lib/auth";
 import { parseMorningDew, type ParsedRow } from "@/lib/import-morning-dew";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,9 +21,9 @@ export const Route = createFileRoute("/_authenticated/admin/import")({
 
 function ImportPage() {
   const { user } = useUser();
-  const admin = useCanManageContent(user?.id);
+  const admin = useIsAdmin(user?.id);
   if (admin.isLoading || !user) return null;
-  if (!admin.data) return <p className="text-muted-foreground">Historical import is available to content reviewers only.</p>;
+  if (!admin.data) return <p className="text-muted-foreground">Historical import is available to admins only.</p>;
   return <Importer />;
 }
 
