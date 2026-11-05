@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchArchiveGames, type ArchiveGame } from "@/lib/archive";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/auth";
+import { SignupGate } from "@/components/signup-gate";
 
 export const Route = createFileRoute("/archive/")({
   head: () => ({
@@ -18,6 +20,13 @@ export const Route = createFileRoute("/archive/")({
 });
 
 function ArchiveIndex() {
+  const { user, ready } = useUser();
+  if (!ready) return <p className="text-muted-foreground">Loading…</p>;
+  if (!user) return <SignupGate />;
+  return <ArchiveList />;
+}
+
+function ArchiveList() {
   const q = useQuery({ queryKey: ["archive-games"], queryFn: fetchArchiveGames });
   const byCountry = new Map<string, { name: string; providers: Map<string, { name: string; games: ArchiveGame[] }> }>();
   for (const g of q.data ?? []) {

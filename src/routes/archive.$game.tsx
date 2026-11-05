@@ -5,6 +5,8 @@ import { fmt } from "@/lib/data";
 import { pad2 } from "@/lib/import-morning-dew";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/auth";
+import { SignupGate } from "@/components/signup-gate";
 
 export const Route = createFileRoute("/archive/$game")({
   validateSearch: (s: Record<string, unknown>) => parseArchiveSearch(s),
@@ -34,6 +36,13 @@ function Retry({ onRetry, text }: { onRetry: () => void; text: string }) {
 }
 
 function GameArchive() {
+  const { user, ready } = useUser();
+  if (!ready) return <p className="text-muted-foreground">Loading…</p>;
+  if (!user) return <SignupGate />;
+  return <GameArchiveContent />;
+}
+
+function GameArchiveContent() {
   const { game: slug } = Route.useParams();
   const { year, page } = Route.useSearch();
   const game = useQuery({ queryKey: ["archive-game", slug], queryFn: () => fetchArchiveGame(slug) });

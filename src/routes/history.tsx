@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { fetchHistory, fmt } from "@/lib/data";
+import { fetchForecastedGameIds, fetchHistory, fmt } from "@/lib/data";
 import { countHits } from "@/lib/stats";
 import { GameFilter } from "@/components/game-filter";
 import { Balls } from "@/components/site-header";
@@ -23,7 +23,9 @@ export const Route = createFileRoute("/history")({
 
 function History() {
   const [game, setGame] = useState("all");
-  const q = useQuery({ queryKey: ["history", game], queryFn: () => fetchHistory(game === "all" ? undefined : game) });
+  const gameIds = useQuery({ queryKey: ["forecasted-game-ids"], queryFn: fetchForecastedGameIds });
+  const raw = useQuery({ queryKey: ["history", game], queryFn: () => fetchHistory(game === "all" ? undefined : game) });
+  const q = { data: raw.data?.filter((d) => d.forecasts.some((f) => f.published_at)) };
 
   return (
     <div className="space-y-6">
@@ -32,7 +34,7 @@ function History() {
           <h1 className="text-3xl font-bold">Verified history</h1>
           <p className="text-muted-foreground">Original published combinations against official winning numbers.</p>
         </div>
-        <GameFilter value={game} onChange={setGame} />
+        <GameFilter value={game} onChange={setGame} gameIds={gameIds.data ?? []} />
       </div>
       {q.data?.length === 0 && <p className="rounded-xl border p-8 text-center text-muted-foreground">No verified draws yet.</p>}
       <div className="space-y-4">

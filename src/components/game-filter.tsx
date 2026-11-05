@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchGames } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export function GameFilter({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const games = useQuery({ queryKey: ["games"], queryFn: fetchGames });
+export function GameFilter({ value, onChange, gameIds }: { value: string; onChange: (v: string) => void; gameIds?: string[] }) {
+  const all = useQuery({ queryKey: ["games"], queryFn: fetchGames });
+  const games = { data: gameIds ? (all.data ?? []).filter((g) => gameIds.includes(g.id)) : all.data };
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-64"><SelectValue placeholder="All games" /></SelectTrigger>
