@@ -24,6 +24,16 @@ export type HistoryDraw = {
     forecast_combinations: { id: string; combination_number: number; forecast_numbers: { number_value: number; number_type: string }[] }[] }[];
 };
 
+/** Game ids that have at least one published forecast. */
+export async function fetchForecastedGameIds(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("forecasts")
+    .select("draw:draws(game_id)")
+    .not("published_at", "is", null);
+  if (error) throw error;
+  return [...new Set((data ?? []).map((f: any) => f.draw?.game_id).filter(Boolean))] as string[];
+}
+
 export async function fetchHistory(gameId?: string): Promise<HistoryDraw[]> {
   let q = supabase
     .from("draws")
