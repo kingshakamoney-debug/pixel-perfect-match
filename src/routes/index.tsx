@@ -4,7 +4,7 @@ import { fetchScores, fetchUpcoming, fmt } from "@/lib/data";
 import { computePerformance, pct } from "@/lib/stats";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logo from "@/assets/lottowizard-logo.png.asset.json";
+import logoUrl from "@/assets/lottowizard-logo.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,7 +28,7 @@ function Index() {
   return (
     <div className="space-y-12">
       <section className="bg-hero -mx-4 rounded-2xl px-4 py-14 text-center">
-        <img src={logo.url} alt="LottoWizard — magical numbers in motion" className="mx-auto mb-6 h-44 w-44 rounded-full object-cover shadow-2xl ring-2 ring-primary/40" />
+        <img src={logoUrl} alt="LottoWizard — magical numbers in motion" className="mx-auto mb-6 h-44 w-44 rounded-full object-cover shadow-2xl ring-2 ring-primary/40" />
         <Badge variant="outline" className="mb-4">Ghana NLA · Golden Chance</Badge>
         <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight md:text-5xl">
           Forecasts you can audit, draw by draw.
