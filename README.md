@@ -35,7 +35,7 @@ See [docs/audit-report.md](docs/audit-report.md) for the full security audit and
 
 ### Must-haves (core platform)
 
-- [x] Email and Google sign-in, with email confirmation
+- [x] Email sign-in, with email confirmation
 - [x] Secure one-time admin bootstrap (no automatic first-signup promotion)
 - [x] Draw management with per-game rules (number range, line size, match threshold)
 - [x] Forecast Studio: single-set and multi-line drafts, publish with cutoff enforcement
@@ -89,7 +89,7 @@ The first administrator claims the role once from the Admin page; after that, no
 ### For users
 
 - **Browse free:** the History and Performance pages show every past forecast and exactly how it scored — no sign-up needed.
-- **Join:** sign up with email or Google to follow upcoming draws.
+- **Join:** sign up with email and a handle to follow upcoming draws.
 - **Go premium:** open the Membership page, pick a plan, transfer the exact amount to the listed bank account, and submit your receipt and transaction reference. An administrator verifies the payment in the bank account and your access starts — you'll see the status of every request on the same page. Members see forecast numbers before the draw; everyone sees them after results are verified. A 3-day free trial is coming with phone verification.
 - **Trust the record:** hit rates are computed from real, verified draws — 2+ matching numbers in a line is a hit, and the misses are shown too.
 
