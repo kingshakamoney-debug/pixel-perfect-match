@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { title: "LottoWizard — Lotto forecasts with verified track records" },
-      { name: "description", content: "Ghana NLA and Golden Chance forecasts, scored openly against official results." },
+      { name: "description", content: "Ghana NLA, Golden Chance and Premier Lotto forecasts, scored openly against official results." },
       { property: "og:title", content: "LottoWizard — Lotto forecasts with verified track records" },
       { property: "og:description", content: "Every published forecast scored against verified official results. 2+ matches counts as a hit." },
     ],
@@ -29,7 +29,7 @@ function Index() {
     <div className="space-y-12">
       <section className="bg-hero -mx-4 rounded-2xl px-4 py-14 text-center">
         <img src={logoUrl} alt="LottoWizard — magical numbers in motion" className="mx-auto mb-6 h-44 w-44 rounded-full object-cover shadow-2xl ring-2 ring-primary/40" />
-        <Badge variant="outline" className="mb-4">Ghana NLA · Golden Chance</Badge>
+        <Badge variant="outline" className="mb-4">Ghana NLA · Golden Chance · Premier Lotto</Badge>
         <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight md:text-5xl">
           Forecasts you can audit, draw by draw.
         </h1>
@@ -39,6 +39,17 @@ function Index() {
         <div className="mt-8 flex justify-center gap-3">
           <Button asChild size="lg"><Link to="/history">See the record</Link></Button>
           <Button asChild size="lg" variant="outline"><Link to="/dashboard">Today's forecasts</Link></Button>
+        </div>
+      </section>
+
+      <section className="grid items-center gap-8 md:grid-cols-2">
+        <div className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border bg-card shadow-2xl ring-2 ring-primary/30">
+          <video src="/videos/lottowizard-intro.mp4" controls playsInline muted preload="metadata" className="aspect-[9/16] w-full bg-muted object-cover" />
+        </div>
+        <div className="text-center md:text-left">
+          <h2 className="text-2xl font-semibold">See LottoWizard in 18 seconds</h2>
+          <p className="mt-3 text-muted-foreground">Forecasts for Ghana NLA, Nigeria Golden Chance and Nigeria Premier Lotto — every one timestamped and scored against verified results.</p>
+          <p className="mt-3 text-xs text-muted-foreground">Forecasts are possibilities, not guarantees. Play responsibly, 18+.</p>
         </div>
       </section>
 
