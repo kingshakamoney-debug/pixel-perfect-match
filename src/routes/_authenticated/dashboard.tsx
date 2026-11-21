@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEntitlement, useUser } from "@/lib/auth";
+import { useEntitlement, useIsAdmin, useUser } from "@/lib/auth";
 import { fmt } from "@/lib/data";
+import { shouldShowRenewalReminder } from "@/lib/subscription";
 import { Balls } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ const reasons: Record<string, string> = {
 function Dashboard() {
   const { user } = useUser();
   const ent = useEntitlement(user?.id);
+  const admin = useIsAdmin(user?.id);
   const forecasts = useQuery({
     queryKey: ["premium", user?.id],
     enabled: !!ent.data?.allowed,
@@ -40,9 +42,14 @@ function Dashboard() {
   });
   const reminders = useQuery({
     queryKey: ["my-reminders", user?.id],
-    enabled: !!user,
+    enabled: !!user && admin.data === false,
     queryFn: async () =>
-      (await supabase.from("reminder_logs").select("id,days_before,expires_at,created_at").order("created_at", { ascending: false }).limit(5)).data ?? [],
+      (await supabase
+        .from("reminder_logs")
+        .select("id,days_before,expires_at,created_at,subscriptions!inner(user_id)")
+        .eq("subscriptions.user_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(5)).data ?? [],
   });
 
   return (
@@ -56,10 +63,10 @@ function Dashboard() {
           </Badge>
         )}
       </div>
-      {reminders.data && reminders.data.length > 0 && (
+      {admin.data === false && shouldShowRenewalReminder(false, reminders.data?.length ?? 0) && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/50 bg-primary/10 p-4">
           <p className="text-sm">
-            Your membership expires on <span className="font-semibold">{fmt(reminders.data[0]!.expires_at)}</span>. Renew by bank transfer to keep your access — paid early renewals extend from your current expiry.
+            Your membership expires on <span className="font-semibold">{fmt(reminders.data![0]!.expires_at)}</span>. Renew by bank transfer to keep your access — paid early renewals extend from your current expiry.
           </p>
           <Button size="sm" asChild><Link to="/subscription">Renew now</Link></Button>
         </div>

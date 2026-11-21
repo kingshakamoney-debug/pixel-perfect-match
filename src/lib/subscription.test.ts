@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addCalendarMonths, isReminderDue, reminderKey, subscriptionPeriod } from "./subscription";
+import { addCalendarMonths, isReminderDue, reminderKey, shouldShowRenewalReminder, subscriptionPeriod } from "./subscription";
 
 const now = new Date("2026-10-24T09:00:00Z");
 
@@ -49,5 +49,16 @@ describe("reminderKey", () => {
     expect(a).not.toBe(reminderKey("sub1", "2026-10-31T09:00:00.000Z", 3));
     expect(a).not.toBe(reminderKey("sub1", "2026-11-30T09:00:00.000Z", 7));
     expect(a).toBe(reminderKey("sub1", "2026-10-31T09:00:00.000Z", 7));
+  });
+});
+
+describe("shouldShowRenewalReminder", () => {
+  it("never shows a renewal prompt to administrators or superadmins", () => {
+    expect(shouldShowRenewalReminder(true, 1)).toBe(false);
+  });
+
+  it("shows a prompt only when a member has a reminder", () => {
+    expect(shouldShowRenewalReminder(false, 1)).toBe(true);
+    expect(shouldShowRenewalReminder(false, 0)).toBe(false);
   });
 });

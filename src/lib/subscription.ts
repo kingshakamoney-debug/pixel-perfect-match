@@ -30,3 +30,8 @@ export function isReminderDue(expiresAt: Date, daysBefore: number, now: Date): b
  *  given expiry is recorded at most once and a renewed expiry gets fresh keys. */
 export const reminderKey = (subscriptionId: string, expiresAt: string, daysBefore: number): string =>
   `${subscriptionId}:${expiresAt}:${daysBefore}`;
+
+/** Administrators have permanent access and must not see member renewal prompts. */
+export function shouldShowRenewalReminder(isAdministrator: boolean, reminderCount: number): boolean {
+  return !isAdministrator && reminderCount > 0;
+}
